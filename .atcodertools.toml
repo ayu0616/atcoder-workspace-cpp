@@ -1,0 +1,12 @@
+[codestyle]
+workspace_dir='.'
+template_file='./template.cpp'
+lang='cpp'
+
+[compiler]
+compile_command='g++ main.cpp -o main -std=c++17'
+compile_only_when_diff_detected=true
+
+[tester]
+compile_before_testing=true
+compile_only_when_diff_detected=true
