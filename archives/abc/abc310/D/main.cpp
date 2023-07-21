@@ -6,7 +6,7 @@
 
 // using mint = static_modint<MOD>;
 
-ll fac(int n)
+ll fac(int n) // 階乗を求める
 {
     ll res = 1;
     rep(i, n)
