@@ -5,7 +5,7 @@ import sys
 from glob import glob
 from threading import Thread
 from time import sleep
-
+import shutil
 import dotenv
 import requests
 from bs4 import BeautifulSoup
@@ -42,9 +42,14 @@ def check_is_wait(c: str):
 
 def check_duplicate():
     """コンテストの重複があれば終了する"""
-    if os.path.exists(contest):
-        print(f"Directory {contest} already exists.")
-        sys.exit(1)
+    dirs = glob("archives/*")
+    dirs.append("/")
+    for d in dirs:
+        path = os.path.join(d, contest)
+        if os.path.exists(path):
+            shutil.move(path, f"./{contest}")
+            print(f"Directory {contest} already exists.")
+            sys.exit(1)
 
 
 def open_browser():
