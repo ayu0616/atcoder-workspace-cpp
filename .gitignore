@@ -1,0 +1,17 @@
+.env
+
+.vscode/settings.json
+.mypy_cache
+**/.DS_Store
+
+in_*.txt
+out_*.txt
+**/in/*
+metadata.json
+*.dSYM
+main
+main.cpp
+
+test
+
+tasks.pdf
