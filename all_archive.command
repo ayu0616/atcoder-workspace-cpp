@@ -4,3 +4,4 @@ mv agc[0-9][0-9][0-9] archives/agc
 mv ahc[0-9][0-9][0-9] archives/ahc
 git add archives/*
 git commit -m "move to archives"
+git push
