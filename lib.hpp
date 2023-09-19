@@ -13,8 +13,12 @@ using vpll = vector<pair<long long, long long>>;
 template <typename T>
 using greater_heap = priority_queue<T, vector<T>, greater<T>>; // ヒープ（小さい順）
 
-#define rep(i, n) for (int i = 0; i < (int)(n); i++)
-#define rep2(i, a, b) for (int i = (a); i < (int)(b); i++)
+#define ov3(a, b, c, name, ...) name
+#define rep2(i, a, b) for (ll i = (a); i < (b); i++)
+#define rep1(i, n) rep2(i, 0, n)
+#define rep0(n) rep1(iiiii, n)
+#define rep(...) ov3(__VA_ARGS__, rep2, rep1, rep0)(__VA_ARGS__)
+#define foreach(v, c) for (auto &v : c)
 #define all(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
 #define debug(x) cerr << #x << ": " << x << '\n'
