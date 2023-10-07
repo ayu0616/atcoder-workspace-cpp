@@ -4,7 +4,7 @@ template_file='./template.cpp'
 lang='cpp'
 
 [compiler]
-compile_command='g++ main.cpp -o main -std=c++23'
+compile_command='/opt/homebrew/bin/g++-12 main.cpp -o main -ld_classic -std=c++20'
 compile_only_when_diff_detected=true
 
 [tester]
