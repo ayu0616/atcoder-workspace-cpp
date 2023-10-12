@@ -1,1 +1,0 @@
-python _prepare_contest.py $1
