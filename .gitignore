@@ -6,6 +6,7 @@
 
 in_*.txt
 out_*.txt
+test-input.txt
 **/in/*
 **/out/*
 metadata.json

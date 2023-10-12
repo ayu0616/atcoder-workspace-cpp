@@ -1,11 +1,12 @@
 import datetime
 import os
+import shutil
 import subprocess
 import sys
 from glob import glob
 from threading import Thread
 from time import sleep
-import shutil
+
 import dotenv
 import requests
 from bs4 import BeautifulSoup
@@ -66,6 +67,7 @@ def gen():
     cpp_files.sort()
     subprocess.run(f"code-insiders {' '.join(cpp_files)}", shell=True)
     subprocess.run(f"chmod 777 {' '.join(cpp_files)}", shell=True)
+    subprocess.run(f"./create_test_input {contest}", shell=True)  # デバッグ用の入力ファイルを作成
 
 
 def wait():
