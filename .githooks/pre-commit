@@ -1,0 +1,8 @@
+#! /bin/zsh
+echo "コミットするコードに公開してはいけないコード（開催中のコンテスト）は含まれていません(y/N): "
+if read -q; then
+    exit 0
+else
+    echo "コミットを中止しました"
+    exit 1
+fi
