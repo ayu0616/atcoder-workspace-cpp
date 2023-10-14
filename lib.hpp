@@ -100,6 +100,122 @@ constexpr auto max(set<T> a)
     return *max_element(a.begin(), a.end());
 }
 
+// @brief グラフの辺
+// @param to 辺の行き先
+// @param cost 辺のコスト
+struct Edge
+{
+    ll to, cost;
+};
+
+// @brief グラフ
+class Graph : vector<vector<Edge>>
+{
+    ll n;
+
+public:
+    Graph(ll n)
+    {
+        this->n = n;
+        this->resize(n);
+    }
+
+    void add_edge(ll from, ll to, ll cost = 1)
+    {
+        this->at(from).push_back({to, cost});
+    }
+
+    // @brief ダイクストラ法
+    // @param start 始点
+    // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
+    vl dyjkstra(ll start)
+    {
+        vl dist(n, LLONG_MAX);
+        dist[start] = 0;
+        priority_queue<pll, vpll, greater<pll>> que;
+        que.push({0, start});
+        while (!que.empty())
+        {
+            pll p = que.top();
+            que.pop();
+            ll v = p.second;
+            if (dist[v] < p.first)
+                continue;
+            for (auto e : this->at(v))
+            {
+                if (dist[e.to] > dist[v] + e.cost)
+                {
+                    dist[e.to] = dist[v] + e.cost;
+                    que.push({dist[e.to], e.to});
+                }
+            }
+        }
+        rep(i, n) if (dist[i] == LLONG_MAX) dist[i] = -1;
+        return dist;
+    }
+
+    // @brief ワーシャルフロイド法
+    // @return 全点間の最短距離（到達不可能な点への距離は-1とする）
+    vvl warshall_floyd()
+    {
+        vvl dist(n, vl(n, LLONG_MAX));
+        rep(i, n) dist[i][i] = 0;
+        rep(i, n)
+        {
+            for (auto e : this->at(i))
+            {
+                dist[i][e.to] = e.cost;
+            }
+        }
+        rep(k, n)
+        {
+            rep(i, n)
+            {
+                rep(j, n)
+                {
+                    if (dist[i][k] != LLONG_MAX && dist[k][j] != LLONG_MAX)
+                    {
+                        chmin(dist[i][j], dist[i][k] + dist[k][j]);
+                    }
+                }
+            }
+        }
+        rep(i, n) rep(j, n) if (dist[i][j] == LLONG_MAX) dist[i][j] = -1;
+        return dist;
+    }
+
+    // @brief ベルマンフォード法
+    // @param start 始点
+    // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
+    vl bellman_ford(ll start)
+    {
+        vl dist(n, LLONG_MAX);
+        dist[start] = 0;
+        rep(i, n)
+        {
+            rep(j, n)
+            {
+                for (auto e : this->at(j))
+                {
+                    if (dist[j] != LLONG_MAX && dist[e.to] > dist[j] + e.cost)
+                    {
+                        dist[e.to] = dist[j] + e.cost;
+                        if (i == n - 1)
+                            dist[e.to] = LLONG_MIN;
+                    }
+                }
+            }
+        }
+        rep(i, n) if (dist[i] == LLONG_MAX) dist[i] = -1;
+        return dist;
+    }
+
+    vector<Edge> operator[](ll id)
+    {
+        return this->at(id);
+    }
+};
+
 /* 素数判定 */
 bool is_prime(ll n)
 {
