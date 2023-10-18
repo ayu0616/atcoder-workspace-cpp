@@ -454,6 +454,19 @@ ostream &operator<<(ostream &os, const vector<vector<T>> &v)
     return os;
 }
 
+template <class T>
+ostream &operator<<(ostream &os, set<T> &s)
+{
+    ll i = 0;
+    for (T v : s)
+    {
+        cout << v;
+        if (i++ < s.size() - 1)
+            os << " ";
+    }
+    return os;
+}
+
 template <typename T>
 void print(T v)
 {
