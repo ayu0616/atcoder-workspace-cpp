@@ -11,7 +11,6 @@ using pll = pair<long long, long long>;
 using vpii = vector<pair<int, int>>;
 using vpll = vector<pair<long long, long long>>;
 template <typename T>
-using greater_heap = priority_queue<T, vector<T>, greater<T>>; // ヒープ（小さい順）
 
 #define ov3(a, b, c, name, ...) name
 #define rep2(i, a, b) for (ll i = (a); i < (b); i++)
@@ -28,17 +27,25 @@ int dy4[4] = {1, 0, -1, 0};               // 4方向移動用
 int dx8[8] = {0, 1, 1, 1, 0, -1, -1, -1}; // 8方向移動用
 int dy8[8] = {1, 1, 0, -1, -1, -1, 0, 1}; // 8方向移動用
 
-// struct in
-// {
-//     in(){};
-//     template <class T>
-//     operator T()
-//     {
-//         T t;
-//         cin >> t;
-//         return t;
-//     }
-// };
+// @brief ヒープ（小さい順）
+template <typename T>
+struct greater_heap : priority_queue<T, vector<T>, greater<T>>
+{
+public:
+    bool not_empty()
+    {
+        return !this->empty();
+    }
+
+    void print_all()
+    {
+        while (not_empty())
+        {
+            cout << this->top() << endl;
+            this->pop();
+        }
+    }
+};
 
 // @brief 大きい方で更新
 // @param a 更新される値
