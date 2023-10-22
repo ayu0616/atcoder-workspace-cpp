@@ -467,6 +467,33 @@ ostream &operator<<(ostream &os, set<T> &s)
     return os;
 }
 
+template <class T>
+ostream &operator<<(ostream &os, priority_queue<T> q)
+{
+    ll i = 0;
+    while (!q.empty())
+    {
+        cout << q.top();
+        q.pop();
+        if (i++ < q.size() - 1)
+            os << " ";
+    }
+    return os;
+}
+template <class T>
+ostream &operator<<(ostream &os, greater_heap<T> q)
+{
+    ll i = 0;
+    while (!q.empty())
+    {
+        cout << q.top();
+        q.pop();
+        if (i++ < q.size() - 1)
+            os << " ";
+    }
+    return os;
+}
+
 template <typename T>
 void print(T v)
 {
