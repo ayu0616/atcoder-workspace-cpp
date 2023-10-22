@@ -4,8 +4,8 @@
 .mypy_cache
 **/.DS_Store
 
-in_*.txt
-out_*.txt
+in*.txt
+out*.txt
 test-input.txt
 **/in/*
 **/out/*
