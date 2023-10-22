@@ -100,16 +100,49 @@ constexpr auto max(set<T> a)
     return *max_element(a.begin(), a.end());
 }
 
+struct Edge;
+
+// @brief グラフの頂点
+struct Vertex
+{
+    ll id;
+    vector<Edge> edges;
+
+    Vertex(ll id)
+    {
+        this->id = id;
+        this->edges = vector<Edge>();
+    }
+
+    operator ll() const
+    {
+        return this->id;
+    }
+};
+
 // @brief グラフの辺
 // @param to 辺の行き先
 // @param cost 辺のコスト
 struct Edge
 {
-    ll to, cost;
+    Vertex *to;
+    ll cost;
+
+    Edge(ll to, ll cost = 1)
+    {
+        this->to = new Vertex(to);
+        this->cost = cost;
+    }
+
+    Edge(Vertex *to, ll cost = 1)
+    {
+        this->to = to;
+        this->cost = cost;
+    }
 };
 
 // @brief グラフ
-class Graph : vector<vector<Edge>>
+class Graph : vector<Vertex>
 {
     ll n;
 
@@ -117,12 +150,15 @@ public:
     Graph(ll n)
     {
         this->n = n;
-        this->resize(n);
+        rep(i, n) this->push_back(Vertex(i));
     }
 
     void add_edge(ll from, ll to, ll cost = 1)
     {
-        this->at(from).push_back({to, cost});
+        Vertex &u = this->at(from);
+        Vertex &v = this->at(to);
+        Edge e(v, cost);
+        u.edges.push_back(e);
     }
 
     // @brief ダイクストラ法
@@ -141,12 +177,12 @@ public:
             ll v = p.second;
             if (dist[v] < p.first)
                 continue;
-            for (auto e : this->at(v))
+            for (auto e : this->at(v).edges)
             {
-                if (dist[e.to] > dist[v] + e.cost)
+                if (dist[*e.to] > dist[v] + e.cost)
                 {
-                    dist[e.to] = dist[v] + e.cost;
-                    que.push({dist[e.to], e.to});
+                    dist[*e.to] = dist[v] + e.cost;
+                    que.push({dist[*e.to], *e.to});
                 }
             }
         }
@@ -162,9 +198,9 @@ public:
         rep(i, n) dist[i][i] = 0;
         rep(i, n)
         {
-            for (auto e : this->at(i))
+            for (auto e : this->at(i).edges)
             {
-                dist[i][e.to] = e.cost;
+                dist[i][*e.to] = e.cost;
             }
         }
         rep(k, n)
@@ -195,13 +231,13 @@ public:
         {
             rep(j, n)
             {
-                for (auto e : this->at(j))
+                for (auto e : this->at(j).edges)
                 {
-                    if (dist[j] != LLONG_MAX && dist[e.to] > dist[j] + e.cost)
+                    if (dist[j] != LLONG_MAX && dist[*e.to] > dist[j] + e.cost)
                     {
-                        dist[e.to] = dist[j] + e.cost;
+                        dist[*e.to] = dist[j] + e.cost;
                         if (i == n - 1)
-                            dist[e.to] = LLONG_MIN;
+                            dist[*e.to] = LLONG_MIN;
                     }
                 }
             }
@@ -212,7 +248,7 @@ public:
 
     vector<Edge> operator[](ll id)
     {
-        return this->at(id);
+        return this->at(id).edges;
     }
 };
 
