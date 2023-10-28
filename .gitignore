@@ -4,15 +4,15 @@
 .mypy_cache
 **/.DS_Store
 
-in*.txt
-out*.txt
-test-input.txt
+*.txt
 **/in/*
 **/out/*
 metadata.json
 *.dSYM
 main
+main[0-9]
 main.cpp
+main[0-9].cpp
 
 test
 
