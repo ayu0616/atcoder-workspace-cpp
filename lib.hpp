@@ -537,6 +537,13 @@ ostream &operator<<(ostream &os, greater_heap<T> q)
     return os;
 }
 
+template <class T, class S>
+ostream &operator<<(ostream &os, pair<T, S> p)
+{
+    os << p.first << " " << p.second;
+    return os;
+}
+
 template <typename T>
 void print(T v)
 {
