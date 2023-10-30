@@ -474,6 +474,13 @@ int digit_sum(T n)
 }
 
 template <class T>
+istream &operator>>(istream &is, vector<T> &v)
+{
+    rep(i, v.size()) is >> v[i];
+    return is;
+}
+
+template <class T>
 ostream &operator<<(ostream &os, const vector<T> &v)
 {
     for (int i = 0; i < v.size(); i++)
