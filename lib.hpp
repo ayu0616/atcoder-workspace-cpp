@@ -10,7 +10,6 @@ using pii = pair<int, int>;
 using pll = pair<long long, long long>;
 using vpii = vector<pair<int, int>>;
 using vpll = vector<pair<long long, long long>>;
-template <typename T>
 
 #define ov3(a, b, c, name, ...) name
 #define rep2(i, a, b) for (ll i = (a); i < (b); i++)
