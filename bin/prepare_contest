@@ -69,7 +69,7 @@ def gen():
     cpp_files.sort()
     subprocess.run(f"code-insiders {' '.join(cpp_files)}", shell=True)
     subprocess.run(f"chmod 777 {' '.join(cpp_files)}", shell=True)
-    subprocess.run(f"./create_test_input {contest}", shell=True)  # デバッグ用の入力ファイルを作成
+    subprocess.run(f"create_test_input {contest}", shell=True)  # デバッグ用の入力ファイルを作成
 
 
 def wait():
