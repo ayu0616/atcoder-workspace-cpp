@@ -1,3 +1,7 @@
+#ifdef HASSAKU_DEBUG
+#define _GLIBCXX_DEBUG
+#endif
+
 #include "../../lib.hpp"
 
 // constexpr int MOD = 998244353;
