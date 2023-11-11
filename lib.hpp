@@ -131,17 +131,19 @@ struct Vertex
 // @param cost 辺のコスト
 struct Edge
 {
-    Vertex *to;
+    Vertex *from, *to;
     ll cost;
 
-    Edge(ll to, ll cost = 1)
+    Edge(ll from, ll to, ll cost = 1)
     {
+        this->from = new Vertex(from);
         this->to = new Vertex(to);
         this->cost = cost;
     }
 
-    Edge(Vertex *to, ll cost = 1)
+    Edge(Vertex *from, Vertex *to, ll cost = 1)
     {
+        this->from = from;
         this->to = to;
         this->cost = cost;
     }
@@ -163,7 +165,7 @@ public:
     {
         Vertex &u = this->at(from);
         Vertex &v = this->at(to);
-        Edge e(v, cost);
+        Edge e(u, v, cost);
         u.edges.push_back(e);
     }
 
