@@ -3,13 +3,13 @@
 using namespace std;
 using ll = long long;
 using vi = vector<int>;
-using vvi = vector<vector<int>>;
-using vl = vector<long long>;
-using vvl = vector<vector<long long>>;
+using vvi = vector<vi>;
+using vl = vector<ll>;
+using vvl = vector<vl>;
 using pii = pair<int, int>;
-using pll = pair<long long, long long>;
-using vpii = vector<pair<int, int>>;
-using vpll = vector<pair<long long, long long>>;
+using pll = pair<ll, ll>;
+using vpii = vector<pii>;
+using vpll = vector<pll>;
 
 #define ov3(a, b, c, name, ...) name
 #define rep2(i, a, b) for (ll i = (a); i < (b); i++)
@@ -28,7 +28,7 @@ int dy8[8] = {1, 1, 0, -1, -1, -1, 0, 1}; // 8方向移動用
 
 // @brief ヒープ（小さい順）
 template <typename T>
-struct greater_heap : priority_queue<T, vector<T>, greater<T>>
+class greater_heap : priority_queue<T, vector<T>, greater<T>>
 {
 public:
     bool not_empty()
