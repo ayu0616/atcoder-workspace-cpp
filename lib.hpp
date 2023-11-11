@@ -557,3 +557,42 @@ void print(T v)
 {
     cout << v << endl;
 }
+
+void dfs_combination(int n, int r, int from, vi &use, vvi &uses)
+{
+    if (from + r > n)
+    {
+        return;
+    }
+    else if (r == 0)
+    {
+        uses.push_back(use);
+        return;
+    }
+    use.push_back(from);
+    dfs_combination(n, r - 1, from + 1, use, uses);
+    use.pop_back();
+    dfs_combination(n, r, from + 1, use, uses);
+}
+
+// @brief 組み合わせを全列挙する
+template <class T>
+vector<vector<T>> combinations(vector<T> &v, int r)
+{
+    int n = v.size();
+    vi use;
+    vvi uses;
+    dfs_combination(n, r, 0, use, uses);
+    vector<vector<T>> res(uses.size());
+    rep(i, uses.size())
+    {
+        vi &u = uses[i];
+        vector<T> tmp;
+        for (auto &i : u)
+        {
+            tmp.push_back(v[i]);
+        }
+        res[i] = tmp;
+    }
+    return res;
+}
