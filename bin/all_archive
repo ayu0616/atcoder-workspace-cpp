@@ -1,8 +1,19 @@
-#! /bin/zsh
+#! /opt/homebrew/bin/python
 
-mv abc[0-9][0-9][0-9] archives/abc
-mv arc[0-9][0-9][0-9] archives/arc
-mv agc[0-9][0-9][0-9] archives/agc
-mv ahc[0-9][0-9][0-9] archives/ahc
-git add archives/*
-git commit -m "move to archives"
+import shutil
+import subprocess
+from glob import glob
+
+
+def main():
+    contest_list = ["abc", "arc", "agc", "ahc"]
+    for contest in contest_list:
+        contest_files = glob(f"{contest}[0-9][0-9][0-9]")
+        for contest_file in contest_files:
+            shutil.move(contest_file, f"archives/{contest}")
+            subprocess.run(["git", "add", f"archives/{contest}"])
+            subprocess.run(["git", "commit", "-m", f"{contest_file} move to archives"])
+
+
+if __name__ == "__main__":
+    main()
