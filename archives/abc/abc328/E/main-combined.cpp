@@ -1,8 +1,3 @@
-#line 1 "abc328/E/main.cpp"
-#ifdef HASSAKU_DEBUG
-#define _GLIBCXX_DEBUG
-#endif
-
 #line 1 "lib.hpp"
 #include <bits/stdc++.h>
 
@@ -563,7 +558,46 @@ void print(T v)
 {
     cout << v << endl;
 }
-#line 6 "abc328/E/main.cpp"
+
+void dfs_combination(int n, int r, int from, vi &use, vvi &uses)
+{
+    if (from + r > n)
+    {
+        return;
+    }
+    else if (r == 0)
+    {
+        uses.push_back(use);
+        return;
+    }
+    use.push_back(from);
+    dfs_combination(n, r - 1, from + 1, use, uses);
+    use.pop_back();
+    dfs_combination(n, r, from + 1, use, uses);
+}
+
+// @brief 組み合わせを全列挙する
+template <class T>
+vector<vector<T>> combinations(vector<T> &v, int r)
+{
+    int n = v.size();
+    vi use;
+    vvi uses;
+    dfs_combination(n, r, 0, use, uses);
+    vector<vector<T>> res(uses.size());
+    rep(i, uses.size())
+    {
+        vi &u = uses[i];
+        vector<T> tmp;
+        for (auto &i : u)
+        {
+            tmp.push_back(v[i]);
+        }
+        res[i] = tmp;
+    }
+    return res;
+}
+#line 2 "abc328/E/main.cpp"
 
 // constexpr int MOD = 998244353;
 // constexpr int MOD = 1000000007;
@@ -572,36 +606,38 @@ void print(T v)
 // using mint = static_modint<MOD>;
 
 ll N, M, K;
-ll ans = 1e18, cnt = 0;
+ll ans = 1e18;
+vector<Edge> edges;
+UnionFind uf(8LL);
 
-// 全域木を列挙する
-void solve(vector<Edge> unused_edges, vector<Edge> used_edges, ll visited, ll cost)
+void dfs(ll idx, vector<ll> use, UnionFind<ll> uf)
 {
-    cnt++;
-    debug(cnt);
-    if (used_edges.size() == N - 1)
+    if (use.size() == N - 1)
     {
-        ans = min(ans, cost);
+        ll cost = 0;
+        for (auto &i : use)
+        {
+            auto &e = edges[i];
+            cost += e.cost;
+            cost %= K;
+        }
+        chmin(ans, cost);
         return;
     }
-    rep(i, unused_edges.size())
-    {
-        auto e = unused_edges[i];
-        if (visited >> *e.to & 1 && visited >> *e.from & 1)
-            continue;
-        auto tmp = unused_edges;
-        tmp.erase(tmp.begin() + i);
-        auto tmp2 = used_edges;
-        tmp2.push_back(e);
-        solve(tmp, tmp2, visited | (1 << *e.to) | (1 << *e.from), (cost + e.cost) % K);
-    }
+    if (idx == edges.size())
+        return;
+    dfs(idx + 1, use, uf);
+    use.push_back(idx);
+    if(uf.same(*edges[idx].from, *edges[idx].to))
+        return;
+    uf.unite(*edges[idx].from, *edges[idx].to);
+    dfs(idx + 1, use, uf);
 }
 
 int main()
 {
     cin >> N >> M >> K;
     Graph g(N);
-    vector<Edge> edges;
     rep(i, M)
     {
         ll u, v, w;
@@ -611,6 +647,7 @@ int main()
         g.add_edge(v, u, w);
         edges.push_back({u, v, w});
     }
-    solve(edges, {}, 1, 0);
+    vector<ll> use;
+    dfs(0, use, uf);
     cout << ans << endl;
 }
