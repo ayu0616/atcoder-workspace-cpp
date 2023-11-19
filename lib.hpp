@@ -270,7 +270,11 @@ bool is_prime(ll n)
 {
     if (n <= 1)
         return false;
-    for (ll i = 2; i * i <= n; i++)
+    if (n == 2)
+        return true;
+    if (n % 2 == 0)
+        return false;
+    for (ll i = 3; i * i <= n; i += 2)
     {
         if (n % i == 0)
             return false;
@@ -306,7 +310,12 @@ template <class T>
 vl prime_factorize(T n)
 {
     vl res;
-    for (T i = 2; i * i <= n; i++)
+    while(n % 2 == 0)
+    {
+        res.emplace_back(2);
+        n /= 2;
+    }
+    for (T i = 3; i * i <= n; i+=2)
     {
         while (n % i == 0)
         {
