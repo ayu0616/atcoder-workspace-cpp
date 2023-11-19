@@ -111,16 +111,16 @@ struct Edge;
 // @brief グラフの頂点
 struct Vertex
 {
-    ll id;
+    int id;
     vector<Edge> edges;
 
-    Vertex(ll id)
+    Vertex(int id)
     {
         this->id = id;
         this->edges = vector<Edge>();
     }
 
-    operator ll() const
+    operator int() const
     {
         return this->id;
     }
@@ -134,7 +134,7 @@ struct Edge
     Vertex *from, *to;
     ll cost;
 
-    Edge(ll from, ll to, ll cost = 1)
+    Edge(int from, int to, ll cost = 1)
     {
         this->from = new Vertex(from);
         this->to = new Vertex(to);
@@ -147,21 +147,26 @@ struct Edge
         this->to = to;
         this->cost = cost;
     }
+
+    operator int() const
+    {
+        return this->to->id;
+    }
 };
 
 // @brief グラフ
 class Graph : vector<Vertex>
 {
-    ll n;
+    int n;
 
 public:
-    Graph(ll n)
+    Graph(int n)
     {
         this->n = n;
         rep(i, n) this->push_back(Vertex(i));
     }
 
-    void add_edge(ll from, ll to, ll cost = 1)
+    void add_edge(int from, int to, ll cost = 1)
     {
         Vertex &u = this->at(from);
         Vertex &v = this->at(to);
@@ -172,7 +177,7 @@ public:
     // @brief ダイクストラ法
     // @param start 始点
     // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
-    vl dyjkstra(ll start)
+    vl dyjkstra(int start)
     {
         vl dist(n, LLONG_MAX);
         dist[start] = 0;
@@ -182,7 +187,7 @@ public:
         {
             pll p = que.top();
             que.pop();
-            ll v = p.second;
+            int v = p.second;
             if (dist[v] < p.first)
                 continue;
             for (auto e : this->at(v).edges)
@@ -231,7 +236,7 @@ public:
     // @brief ベルマンフォード法
     // @param start 始点
     // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
-    vl bellman_ford(ll start)
+    vl bellman_ford(int start)
     {
         vl dist(n, LLONG_MAX);
         dist[start] = 0;
@@ -254,7 +259,7 @@ public:
         return dist;
     }
 
-    vector<Edge> operator[](ll id)
+    vector<Edge> operator[](int id)
     {
         return this->at(id).edges;
     }
