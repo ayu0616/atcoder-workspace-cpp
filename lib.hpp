@@ -310,12 +310,12 @@ template <class T>
 vl prime_factorize(T n)
 {
     vl res;
-    while(n % 2 == 0)
+    while (n % 2 == 0)
     {
         res.emplace_back(2);
         n /= 2;
     }
-    for (T i = 3; i * i <= n; i+=2)
+    for (T i = 3; i * i <= n; i += 2)
     {
         while (n % i == 0)
         {
@@ -330,7 +330,7 @@ vl prime_factorize(T n)
     return res;
 }
 
-template <class T>
+template <class T = int>
 class UnionFind
 {
     vector<T> par, rank, siz;
