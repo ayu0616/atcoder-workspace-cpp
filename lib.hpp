@@ -28,21 +28,41 @@ int dy8[8] = {1, 1, 0, -1, -1, -1, 0, 1}; // 8方向移動用
 
 // @brief ヒープ（小さい順）
 template <typename T>
-class greater_heap : priority_queue<T, vector<T>, greater<T>>
+class greater_heap
 {
+private:
+    priority_queue<T, vector<T>, greater<T>> q;
+
 public:
+    greater_heap() : q() {}
+
     bool not_empty()
     {
-        return !this->empty();
+        return q.empty();
     }
 
     void print_all()
     {
         while (not_empty())
         {
-            cout << this->top() << endl;
-            this->pop();
+            cout << q.top() << endl;
+            q.pop();
         }
+    }
+
+    void push(T x)
+    {
+        return q.push(x);
+    }
+
+    void pop()
+    {
+        return q.pop();
+    }
+
+    T top()
+    {
+        return q.top();
     }
 };
 
