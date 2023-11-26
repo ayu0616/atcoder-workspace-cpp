@@ -1,6 +1,8 @@
 #include <bits/stdc++.h>
 
 using namespace std;
+
+// 型エイリアス
 using ll = long long;
 using vi = vector<int>;
 using vvi = vector<vi>;
@@ -14,6 +16,7 @@ using pll = pair<ll, ll>;
 using vpii = vector<pii>;
 using vpll = vector<pll>;
 
+// マクロ
 #define ov3(a, b, c, name, ...) name
 #define rep2(i, a, b) for (ll i = (a); i < (b); i++)
 #define rep1(i, n) rep2(i, 0, n)
@@ -24,6 +27,7 @@ using vpll = vector<pll>;
 #define rall(x) (x).rbegin(), (x).rend()
 #define debug(x) cerr << #x << ": " << x << '\n'
 
+// 移動
 int dx4[4] = {0, 1, 0, -1};                // 4方向移動用
 int dy4[4] = {1, 0, -1, 0};                // 4方向移動用
 int dx8[8] = {0, 1, 1, 1, 0, -1, -1, -1};  // 8方向移動用
