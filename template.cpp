@@ -6,6 +6,4 @@
 
 // using mint = static_modint<MOD>;
 
-int main()
-{
-}
+int main() {}
