@@ -41,7 +41,7 @@ constexpr ll LL_INF = 1LL << 60;  // llの最大値
 // @param b 条件
 // @param yes 出力する文字列（デフォルトは`Yes`）
 // @param no 出力する文字列（デフォルトは`No`）
-bool yes_no(bool b, string yes = "Yes", string no = "No") {
+inline bool yes_no(bool b, string yes = "Yes", string no = "No") {
     cout << (b ? yes : no) << endl;
     return b;
 }
@@ -170,7 +170,7 @@ class Graph : vector<Vertex> {
         rep(i, n) this->push_back(Vertex(i));
     }
 
-    void add_edge(int from, int to, ll cost = 1) {
+    inline void add_edge(int from, int to, ll cost = 1) {
         Vertex &u = this->at(from);
         Vertex &v = this->at(to);
         Edge e(u, v, cost);
@@ -249,7 +249,7 @@ class Graph : vector<Vertex> {
 };
 
 /* 素数判定 */
-bool is_prime(ll n) {
+constexpr bool is_prime(const ll n) {
     if (n <= 1) return false;
     if (n == 2) return true;
     if (n % 2 == 0) return false;
@@ -263,7 +263,7 @@ bool is_prime(ll n) {
 @brief 素数を列挙する関数
 @param upper 素数の上限
  */
-vector<ll> create_primes(ll upper) {
+inline vector<ll> create_primes(const ll upper) {
     vector<ll> primes;
     vector<bool> is_p(upper + 1, true);
 
@@ -280,7 +280,7 @@ vector<ll> create_primes(ll upper) {
 
 /* @brief 素因数分解 */
 template <class T>
-vl prime_factorize(T n) {
+constexpr vl prime_factorize(const T n) {
     vl res;
     while (n % 2 == 0) {
         res.emplace_back(2);
@@ -304,14 +304,14 @@ class UnionFind {
 
    public:
     // @param n 要素数
-    UnionFind(T n) {
+    inline UnionFind(T n) {
         par = vector<T>(n, -1);
         rank = vector<T>(n, 0);
         siz = vector<T>(n, 1);
     }
 
     // xの根を求める
-    T root(T x) {
+    inline T root(T x) {
         if (par[x] == -1)
             return x;
         else
@@ -319,10 +319,10 @@ class UnionFind {
     }
 
     // xとyが同じグループに属するかどうか（根が一致するかどうか）
-    bool same(T x, T y) { return root(x) == root(y); }
+    inline bool same(T x, T y) { return root(x) == root(y); }
 
     // xを含むグループとyを含むグループとを併合する
-    void unite(T x, T y) {
+    inline void unite(T x, T y) {
         x = root(x);
         y = root(y);
         if (x == y) return;
@@ -334,10 +334,10 @@ class UnionFind {
     }
 
     // xを含むグループのサイズ
-    T size(T x) { return siz[root(x)]; }
+    inline T size(T x) { return siz[root(x)]; }
 
     // グループ数
-    T groups() {
+    inline T groups() {
         T res = 0;
         for (T i = 0; i < par.size(); i++) {
             if (par[i] == -1) res++;
@@ -356,34 +356,34 @@ class static_modint {
     ll x;
 
    public:
-    static_modint(ll x = 0) : x((x % mod + mod) % mod) {}
-    static_modint operator-() const { return static_modint(-x); }
-    static_modint &operator+=(const static_modint &a) {
+    inline static_modint(ll x = 0) : x((x % mod + mod) % mod) {}
+    inline static_modint operator-() const { return static_modint(-x); }
+    inline static_modint &operator+=(const static_modint &a) {
         if ((x += a.x) >= mod) x -= mod;
         return *this;
     }
-    static_modint &operator-=(const static_modint &a) {
+    inline static_modint &operator-=(const static_modint &a) {
         if ((x += mod - a.x) >= mod) x -= mod;
         return *this;
     }
-    static_modint &operator*=(const static_modint &a) {
+    inline static_modint &operator*=(const static_modint &a) {
         (x *= a.x) %= mod;
         return *this;
     }
-    static_modint operator+(const static_modint &a) const {
+    inline static_modint operator+(const static_modint &a) const {
         static_modint res(*this);
         return res += a;
     }
-    static_modint operator-(const static_modint &a) const {
+    inline static_modint operator-(const static_modint &a) const {
         static_modint res(*this);
         return res -= a;
     }
-    static_modint operator*(const static_modint &a) const {
+    inline static_modint operator*(const static_modint &a) const {
         static_modint res(*this);
         return res *= a;
     }
     // 二分累乗法によるべき乗
-    static_modint pow(ll t) const {
+    inline static_modint pow(ll t) const {
         if (!t) return 1;
         static_modint a = pow(t >> 1);
         a *= a;
@@ -391,11 +391,11 @@ class static_modint {
         return a;
     }
     // 逆元を求める
-    static_modint inv() const { return pow(mod - 2); }
-    static_modint &operator/=(const static_modint &a) {
+    inline static_modint inv() const { return pow(mod - 2); }
+    inline static_modint &operator/=(const static_modint &a) {
         return (*this) *= a.inv();
     }
-    static_modint operator/(const static_modint &a) const {
+    inline static_modint operator/(const static_modint &a) const {
         static_modint res(*this);
         return res /= a;
     }
@@ -408,7 +408,7 @@ class static_modint {
 
 // 桁和
 template <class T>
-int digit_sum(T n) {
+constexpr int digit_sum(T n) {
     int res = 0;
     while (n > 0) {
         res += n % 10;
@@ -418,13 +418,13 @@ int digit_sum(T n) {
 }
 
 template <class T>
-istream &operator>>(istream &is, vector<T> &v) {
-    rep(i, v.size()) is >> v[i];
+inline istream &operator>>(istream &is, vector<T> &v) {
+    for(auto &i : v) is >> i;
     return is;
 }
 
 template <class T>
-ostream &operator<<(ostream &os, const vector<T> &v) {
+inline ostream &operator<<(ostream &os, const vector<T> &v) {
     for (int i = 0; i < v.size(); i++) {
         os << v[i];
         if (i != v.size() - 1) os << " ";
@@ -433,7 +433,7 @@ ostream &operator<<(ostream &os, const vector<T> &v) {
 }
 
 template <class T>
-ostream &operator<<(ostream &os, const vector<vector<T>> &v) {
+inline ostream &operator<<(ostream &os, const vector<vector<T>> &v) {
     for (int i = 0; i < v.size(); i++) {
         os << v[i];
         if (i != v.size() - 1) os << endl;
@@ -442,7 +442,7 @@ ostream &operator<<(ostream &os, const vector<vector<T>> &v) {
 }
 
 template <class T>
-ostream &operator<<(ostream &os, set<T> &s) {
+inline ostream &operator<<(ostream &os, set<T> &s) {
     ll i = 0;
     for (T v : s) {
         cout << v;
@@ -452,7 +452,7 @@ ostream &operator<<(ostream &os, set<T> &s) {
 }
 
 template <class T>
-ostream &operator<<(ostream &os, priority_queue<T> q) {
+inline ostream &operator<<(ostream &os, priority_queue<T> q) {
     ll i = 0;
     while (!q.empty()) {
         cout << q.top();
@@ -462,7 +462,7 @@ ostream &operator<<(ostream &os, priority_queue<T> q) {
     return os;
 }
 template <class T>
-ostream &operator<<(ostream &os, greater_heap<T> q) {
+inline ostream &operator<<(ostream &os, greater_heap<T> q) {
     ll i = 0;
     while (!q.empty()) {
         cout << q.top();
@@ -473,13 +473,13 @@ ostream &operator<<(ostream &os, greater_heap<T> q) {
 }
 
 template <class T, class S>
-ostream &operator<<(ostream &os, pair<T, S> p) {
+inline ostream &operator<<(ostream &os, pair<T, S> p) {
     os << p.first << " " << p.second;
     return os;
 }
 
 template <typename T>
-void print(T v) {
+inline void print(T v) {
     cout << v << endl;
 }
 
