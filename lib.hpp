@@ -37,6 +37,15 @@ int dy8[8] = {1, 1, 0, -1, -1, -1, 0, 1};  // 8方向移動用
 constexpr int INT_INF = 1e9;  // intの最大値
 constexpr ll LL_INF = 1e18;   // llの最大値
 
+// @brief Yes/Noを出力する
+// @param b 条件
+// @param yes 出力する文字列（デフォルトは`Yes`）
+// @param no 出力する文字列（デフォルトは`No`）
+bool yes_no(bool b, string yes = "Yes", string no = "No") {
+    cout << (b ? yes : no) << endl;
+    return b;
+}
+
 // @brief ヒープ（小さい順）
 template <typename T>
 class greater_heap {
