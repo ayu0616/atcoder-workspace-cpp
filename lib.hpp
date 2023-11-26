@@ -34,8 +34,8 @@ int dx8[8] = {0, 1, 1, 1, 0, -1, -1, -1};  // 8方向移動用
 int dy8[8] = {1, 1, 0, -1, -1, -1, 0, 1};  // 8方向移動用
 
 // 最大値
-constexpr int INT_INF = 1e9;  // intの最大値
-constexpr ll LL_INF = 1e18;   // llの最大値
+constexpr int INT_INF = 1 << 30;  // intの最大値
+constexpr ll LL_INF = 1LL << 60;  // llの最大値
 
 // @brief Yes/Noを出力する
 // @param b 条件
