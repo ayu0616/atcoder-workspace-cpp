@@ -29,6 +29,10 @@ int dy4[4] = {1, 0, -1, 0};                // 4方向移動用
 int dx8[8] = {0, 1, 1, 1, 0, -1, -1, -1};  // 8方向移動用
 int dy8[8] = {1, 1, 0, -1, -1, -1, 0, 1};  // 8方向移動用
 
+// 最大値
+constexpr int INT_INF = 1e9;  // intの最大値
+constexpr ll LL_INF = 1e18;   // llの最大値
+
 // @brief ヒープ（小さい順）
 template <typename T>
 class greater_heap {
