@@ -178,8 +178,6 @@ struct State {
         visited.emplace(x, y);
         path.emplace_back(x, y);
         _dfs(x, y, visited);
-        pii back = path.back();
-        bfs(back.first, back.second, x, y);
     }
 
     void _dfs(int x, int y, set<pii> &visited) {
@@ -187,10 +185,10 @@ struct State {
             int nx = x + dx4[i], ny = y + dy4[i];
             if (can_move(x, y, nx, ny) && visited.find({nx, ny}) == visited.end()) {
                 visited.emplace(nx, ny);
-                path.emplace_back(nx, ny);
+                auto [bx, by] = path.back();
+                bfs(bx, by, nx, ny);
                 _dfs(nx, ny, visited);
                 if (visited.size() == N * N) return;
-                path.emplace_back(x, y);
             }
         }
     }
@@ -213,6 +211,8 @@ int main() {
     Random rnd;
     State state;
     state.dfs(0, 0);
+    auto [x, y] = state.path.back();
+    state.bfs(x, y, 0, 0);
     state.calc_score();
     cerr << state.score << endl;
     state.print();
