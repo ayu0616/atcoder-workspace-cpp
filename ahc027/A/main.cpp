@@ -321,10 +321,10 @@ int main() {
         }();
     }
 
-    // time_start = time.get();
-    // time_limit = 1900;
-    // while (!time.is_over(time_limit)) {
-    // }
+    auto tmp = state;
+    reverse(all(tmp.path));
+    tmp.calc_score();
+    if (tmp.score < state.score) state = tmp;
 
     cerr << state.score << endl;
     state.print();
