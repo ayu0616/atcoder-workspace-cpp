@@ -198,7 +198,7 @@ struct State {
                 auto [bx, by] = path.back();
                 insert_path(bx, by, nx, ny, path.end());
                 _dfs(nx, ny, visited);
-                // if (visited.size() == N * N) return;
+                if (visited.size() == N * N) return;
                 insert_path(nx, ny, bx, by, path.end());
             }
         }
