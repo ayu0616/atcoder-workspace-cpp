@@ -199,7 +199,7 @@ struct State {
                 insert_path(bx, by, nx, ny, path.end());
                 _dfs(nx, ny, visited);
                 if (visited.size() == N * N) return;
-                insert_path(nx, ny, bx, by, path.end());
+                // insert_path(nx, ny, bx, by, path.end());
             }
         }
     }
@@ -279,11 +279,6 @@ int main() {
                 int nx1 = x + w.dx, ny1 = y + w.dy;
                 if (!can_move(x, y, nx1, ny1)) return;
                 p.emplace_back(nx1, ny1);
-                // while (rnd() < 0.75) {
-                //     nx1 += w.dx, ny1 += w.dy;
-                //     if (!can_move(x, y, nx1, ny1)) break;
-                //     p.emplace_back(nx1, ny1);
-                // }
                 int nx2 = nx1 + dir.dx, ny2 = ny1 + dir.dy;
                 auto [bx, by] = p.back();
                 if (!can_move(bx, by, nx2, ny2)) return;
