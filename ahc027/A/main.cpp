@@ -26,6 +26,8 @@ struct Random {
 
     Random() { mt.seed(616); }
 
+    double operator()() { return (double)mt() / mt.max(); }
+
     int random_int(int min, int max) { return min + (int)(mt() * (max - min + 1.0) / (1.0 + mt.max())); }
 
     pii random_weighted() {
@@ -78,6 +80,11 @@ struct Dir {
     }
 
     Dir reverse() { return Dir((idx + 2) % 4); }
+
+    Dir operator-() { return reverse(); }
+
+    Dir operator+(Dir &d) { return Dir((idx + d.idx) % 4); }
+    Dir operator+(int i) { return Dir((idx + i) % 4); }
 };
 
 // (x, y)から(nx, ny)に移動できるかどうか
@@ -100,6 +107,7 @@ bool can_move(int x, int y, int nx, int ny) {
 struct State {
     ll score;
     vector<pii> path;
+    vvi grid_cnt;  // 各マスに何回通ったか
 
     State() : score(0) {}
 
@@ -141,7 +149,7 @@ struct State {
     }
 
     // BFSで最短経路を移動し現在のpathに追加
-    void bfs(int sx, int sy, int gx, int gy) {
+    vpii bfs(int sx, int sy, int gx, int gy) {
         constexpr int INF = 1e9;
         vvi dist(N, vi(N, INF));
         vvi prev(N, vi(N, -1));
@@ -169,14 +177,16 @@ struct State {
             x -= dx4[idx], y -= dy4[idx];
         }
         reverse(all(p));
-        path.insert(path.end(), all(p));
+        return p;
     }
 
     // DFSで解を生成
     void dfs(int x, int y) {
         set<pii> visited;
+        grid_cnt.assign(N, vi(N, 0));
         visited.emplace(x, y);
         path.emplace_back(x, y);
+        grid_cnt[y][x]++;
         _dfs(x, y, visited);
     }
 
@@ -186,11 +196,50 @@ struct State {
             if (can_move(x, y, nx, ny) && visited.find({nx, ny}) == visited.end()) {
                 visited.emplace(nx, ny);
                 auto [bx, by] = path.back();
-                bfs(bx, by, nx, ny);
+                insert_path(bx, by, nx, ny, path.end());
                 _dfs(nx, ny, visited);
-                if (visited.size() == N * N) return;
+                // if (visited.size() == N * N) return;
+                insert_path(nx, ny, bx, by, path.end());
             }
         }
+    }
+
+    void insert(int idx, int x, int y) {
+        path.insert(path.begin() + idx, {x, y});
+        grid_cnt[y][x]++;
+    }
+
+    void insert_path(int sx, int sy, int gx, int gy, vpii::iterator it) {
+        auto p = bfs(sx, sy, gx, gy);
+        for (auto [x, y] : p) grid_cnt[y][x]++;
+        path.insert(it, all(p));
+    }
+
+    void erase(int idx) {
+        int x = path[idx].first, y = path[idx].second;
+        grid_cnt[y][x]--;
+        path.erase(path.begin() + idx);
+    }
+
+    void delete_path(int sidx, int gidx) {
+        rep(i, sidx, gidx + 1) {
+            int x = path[i].first, y = path[i].second;
+            grid_cnt[y][x]--;
+        }
+        path.erase(path.begin() + sidx, path.begin() + gidx + 1);
+    }
+
+    bool can_delete(int sidx, int gidx) {
+        vvi del_cnt(N, vi(N, 0));
+        rep(i, sidx, gidx + 1) {
+            int x = path[i].first, y = path[i].second;
+            del_cnt[y][x]++;
+        }
+        rep(i, sidx, gidx + 1) {
+            int x = path[i].first, y = path[i].second;
+            if (grid_cnt[y][x] - del_cnt[y][x] == 0) return false;
+        }
+        return true;
     }
 };
 
@@ -212,8 +261,76 @@ int main() {
     State state;
     state.dfs(0, 0);
     auto [x, y] = state.path.back();
-    state.bfs(x, y, 0, 0);
+    state.insert_path(x, y, 0, 0, state.path.end());
     state.calc_score();
+
+    const double start_temp = N * (d_sum / N / N), end_temp = N * 10;
+    int time_start = time.get();
+    int time_limit = 1900;
+    while (!time.is_over(time_limit)) {
+        [&]() {
+            int sidx = rnd.random_int(0, state.path.size() - 2);
+            auto [x, y] = state.path[sidx];
+            auto [nx, ny] = state.path[sidx + 1];
+            Dir dir(nx - x, ny - y);
+            for (int i : {-1, 1}) {
+                Dir w = dir + i;
+                vpii p;
+                int nx1 = x + w.dx, ny1 = y + w.dy;
+                if (!can_move(x, y, nx1, ny1)) return;
+                p.emplace_back(nx1, ny1);
+                // while (rnd() < 0.75) {
+                //     nx1 += w.dx, ny1 += w.dy;
+                //     if (!can_move(x, y, nx1, ny1)) break;
+                //     p.emplace_back(nx1, ny1);
+                // }
+                int nx2 = nx1 + dir.dx, ny2 = ny1 + dir.dy;
+                auto [bx, by] = p.back();
+                if (!can_move(bx, by, nx2, ny2)) return;
+                p.emplace_back(nx2, ny2);
+                auto tmp = state;
+                tmp.erase(sidx + 1);
+                rep(i, p.size()) {
+                    auto [x, y] = p[i];
+                    tmp.insert(sidx + i + 1, x, y);
+                }
+                tmp.insert_path(p.back().first, p.back().second, nx, ny, tmp.path.begin() + sidx + p.size() + 1);
+                tmp.calc_score();
+                double temp = start_temp + (end_temp - start_temp) * (time.get() - time_start) / (time_limit - time_start);
+                double prob = exp((state.score - tmp.score) / temp);
+                if (rnd() < prob) {
+                    state = tmp;
+                    cerr << state.score << endl;
+                    break;
+                }
+            }
+        }();
+
+        [&]() {
+            auto tmp = state;
+            int sidx = rnd.random_int(0, tmp.path.size() - 2);
+            int gidx = rnd.random_int(sidx + 1, min(tmp.path.size() - 1, sidx + 2 * N));
+            if (!tmp.can_delete(sidx, gidx)) return;
+            auto [sx, sy] = tmp.path[sidx];
+            auto [gx, gy] = tmp.path[gidx];
+            tmp.delete_path(sidx, gidx);
+            tmp.insert(sidx, sx, sy);
+            tmp.insert_path(sx, sy, gx, gy, tmp.path.begin() + sidx + 1);
+            tmp.calc_score();
+            double temp = start_temp + (end_temp - start_temp) * (time.get() - time_start) / (time_limit - time_start);
+            double prob = exp((state.score - tmp.score) / temp);
+            if (rnd() < prob) {
+                state = tmp;
+                cerr << state.score << endl;
+            }
+        }();
+    }
+
+    // time_start = time.get();
+    // time_limit = 1900;
+    // while (!time.is_over(time_limit)) {
+    // }
+
     cerr << state.score << endl;
     state.print();
 }
