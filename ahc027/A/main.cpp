@@ -269,6 +269,7 @@ int main() {
     auto add = [&](int time_start, int time_limit) {
         int sidx = rnd.random_int(0, state.path.size() - 2);
         auto [x, y] = state.path[sidx];
+        if (d[y][x] < d_sum / N / N) return; // 汚れやすさが平均未満ならスルー
         auto [nx, ny] = state.path[sidx + 1];
         Dir dir(nx - x, ny - y);
         for (int i : {-1, 1}) {
