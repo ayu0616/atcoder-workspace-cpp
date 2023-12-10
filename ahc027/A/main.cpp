@@ -269,7 +269,7 @@ int main() {
     auto add = [&](int time_start, int time_limit) {
         int sidx = rnd.random_int(0, state.path.size() - 2);
         auto [x, y] = state.path[sidx];
-        if (d[y][x] < d_sum / N / N) return; // 汚れやすさが平均未満ならスルー
+        if (d[y][x] < d_sum / N / N) return;  // 汚れやすさが平均未満ならスルー
         auto [nx, ny] = state.path[sidx + 1];
         Dir dir(nx - x, ny - y);
         for (int i : {-1, 1}) {
@@ -304,9 +304,10 @@ int main() {
         auto tmp = state;
         int sidx = rnd.random_int(0, tmp.path.size() - 2);
         int gidx = rnd.random_int(sidx + 1, min(tmp.path.size() - 1, sidx + 2 * N));
-        if (!tmp.can_delete(sidx, gidx)) return;
         auto [sx, sy] = tmp.path[sidx];
         auto [gx, gy] = tmp.path[gidx];
+        if (d[sy][sx] < d_sum / N / N && d[gy][gx] < d_sum / N / N) return;  // 汚れやすさが平均未満ならスルー
+        if (!tmp.can_delete(sidx, gidx)) return;
         tmp.delete_path(sidx, gidx);
         tmp.insert(sidx, sx, sy);
         tmp.insert_path(sx, sy, gx, gy, tmp.path.begin() + sidx + 1);
@@ -323,27 +324,61 @@ int main() {
 
     // 追加
     time_start = time.get();
-    time_limit = 800;
-    while (!time.is_over(time_limit)) {
+    time_limit = 1800;
+    while (!time.is_over(800)) {
         add(time_start, time_limit);
     }
     // 削除
-    time_start = time.get();
-    time_limit = 900;
-    while (!time.is_over(time_limit)) {
+    // time_start = time.get();
+    // time_limit = 1000;
+    while (!time.is_over(900)) {
         erase(time_start, time_limit);
     }
     // 追加
-    time_start = time.get();
-    time_limit = 1800;
-    while (!time.is_over(time_limit)) {
+    // time_start = time.get();
+    // time_limit = 1700;
+    while (!time.is_over(1700)) {
         add(time_start, time_limit);
     }
     // 削除
-    time_start = time.get();
-    time_limit = 1900;
-    while (!time.is_over(time_limit)) {
+    // time_start = time.get();
+    // time_limit = 1900;
+    while (!time.is_over(1800)) {
         erase(time_start, time_limit);
+    }
+
+    while (!time.is_over(1900)) {
+        [&]() {
+            int sidx = rnd.random_int(0, state.path.size() - 2);
+            auto [x, y] = state.path[sidx];
+            if (d[y][x] < d_sum / N / N) return;  // 汚れやすさが平均未満ならスルー
+            auto [nx, ny] = state.path[sidx + 1];
+            Dir dir(nx - x, ny - y);
+            for (int i : {-1, 1}) {
+                Dir w = dir + i;
+                vpii p;
+                int nx1 = x + w.dx, ny1 = y + w.dy;
+                if (!can_move(x, y, nx1, ny1)) return;
+                p.emplace_back(nx1, ny1);
+                int nx2 = nx1 + dir.dx, ny2 = ny1 + dir.dy;
+                auto [bx, by] = p.back();
+                if (!can_move(bx, by, nx2, ny2)) return;
+                p.emplace_back(nx2, ny2);
+                auto tmp = state;
+                tmp.erase(sidx + 1);
+                rep(i, p.size()) {
+                    auto [x, y] = p[i];
+                    tmp.insert(sidx + i + 1, x, y);
+                }
+                tmp.insert_path(p.back().first, p.back().second, nx, ny, tmp.path.begin() + sidx + p.size() + 1);
+                tmp.calc_score();
+                if (tmp.score < state.score) {
+                    state = tmp;
+                    cerr << state.score << endl;
+                    break;
+                }
+            }
+        }();
     }
 
     auto tmp = state;
