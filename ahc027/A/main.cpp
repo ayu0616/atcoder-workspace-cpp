@@ -265,60 +265,84 @@ int main() {
     state.calc_score();
 
     const double start_temp = N * (d_sum / N / N), end_temp = N * 10;
-    int time_start = time.get();
-    int time_limit = 1900;
-    while (!time.is_over(time_limit)) {
-        [&]() {
-            int sidx = rnd.random_int(0, state.path.size() - 2);
-            auto [x, y] = state.path[sidx];
-            auto [nx, ny] = state.path[sidx + 1];
-            Dir dir(nx - x, ny - y);
-            for (int i : {-1, 1}) {
-                Dir w = dir + i;
-                vpii p;
-                int nx1 = x + w.dx, ny1 = y + w.dy;
-                if (!can_move(x, y, nx1, ny1)) return;
-                p.emplace_back(nx1, ny1);
-                int nx2 = nx1 + dir.dx, ny2 = ny1 + dir.dy;
-                auto [bx, by] = p.back();
-                if (!can_move(bx, by, nx2, ny2)) return;
-                p.emplace_back(nx2, ny2);
-                auto tmp = state;
-                tmp.erase(sidx + 1);
-                rep(i, p.size()) {
-                    auto [x, y] = p[i];
-                    tmp.insert(sidx + i + 1, x, y);
-                }
-                tmp.insert_path(p.back().first, p.back().second, nx, ny, tmp.path.begin() + sidx + p.size() + 1);
-                tmp.calc_score();
-                double temp = start_temp + (end_temp - start_temp) * (time.get() - time_start) / (time_limit - time_start);
-                double prob = exp((state.score - tmp.score) / temp);
-                if (rnd() < prob) {
-                    state = tmp;
-                    cerr << state.score << endl;
-                    break;
-                }
-            }
-        }();
 
-        [&]() {
+    auto add = [&](int time_start, int time_limit) {
+        int sidx = rnd.random_int(0, state.path.size() - 2);
+        auto [x, y] = state.path[sidx];
+        auto [nx, ny] = state.path[sidx + 1];
+        Dir dir(nx - x, ny - y);
+        for (int i : {-1, 1}) {
+            Dir w = dir + i;
+            vpii p;
+            int nx1 = x + w.dx, ny1 = y + w.dy;
+            if (!can_move(x, y, nx1, ny1)) return;
+            p.emplace_back(nx1, ny1);
+            int nx2 = nx1 + dir.dx, ny2 = ny1 + dir.dy;
+            auto [bx, by] = p.back();
+            if (!can_move(bx, by, nx2, ny2)) return;
+            p.emplace_back(nx2, ny2);
             auto tmp = state;
-            int sidx = rnd.random_int(0, tmp.path.size() - 2);
-            int gidx = rnd.random_int(sidx + 1, min(tmp.path.size() - 1, sidx + 2 * N));
-            if (!tmp.can_delete(sidx, gidx)) return;
-            auto [sx, sy] = tmp.path[sidx];
-            auto [gx, gy] = tmp.path[gidx];
-            tmp.delete_path(sidx, gidx);
-            tmp.insert(sidx, sx, sy);
-            tmp.insert_path(sx, sy, gx, gy, tmp.path.begin() + sidx + 1);
+            tmp.erase(sidx + 1);
+            rep(i, p.size()) {
+                auto [x, y] = p[i];
+                tmp.insert(sidx + i + 1, x, y);
+            }
+            tmp.insert_path(p.back().first, p.back().second, nx, ny, tmp.path.begin() + sidx + p.size() + 1);
             tmp.calc_score();
             double temp = start_temp + (end_temp - start_temp) * (time.get() - time_start) / (time_limit - time_start);
             double prob = exp((state.score - tmp.score) / temp);
             if (rnd() < prob) {
                 state = tmp;
                 cerr << state.score << endl;
+                break;
             }
-        }();
+        }
+    };
+
+    auto erase = [&](int time_start, int time_limit) {
+        auto tmp = state;
+        int sidx = rnd.random_int(0, tmp.path.size() - 2);
+        int gidx = rnd.random_int(sidx + 1, min(tmp.path.size() - 1, sidx + 2 * N));
+        if (!tmp.can_delete(sidx, gidx)) return;
+        auto [sx, sy] = tmp.path[sidx];
+        auto [gx, gy] = tmp.path[gidx];
+        tmp.delete_path(sidx, gidx);
+        tmp.insert(sidx, sx, sy);
+        tmp.insert_path(sx, sy, gx, gy, tmp.path.begin() + sidx + 1);
+        tmp.calc_score();
+        double temp = start_temp + (end_temp - start_temp) * (time.get() - time_start) / (time_limit - time_start);
+        double prob = exp((state.score - tmp.score) / temp);
+        if (rnd() < prob) {
+            state = tmp;
+            cerr << state.score << endl;
+        }
+    };
+
+    int time_start, time_limit;
+
+    // 追加
+    time_start = time.get();
+    time_limit = 800;
+    while (!time.is_over(time_limit)) {
+        add(time_start, time_limit);
+    }
+    // 削除
+    time_start = time.get();
+    time_limit = 900;
+    while (!time.is_over(time_limit)) {
+        erase(time_start, time_limit);
+    }
+    // 追加
+    time_start = time.get();
+    time_limit = 1800;
+    while (!time.is_over(time_limit)) {
+        add(time_start, time_limit);
+    }
+    // 削除
+    time_start = time.get();
+    time_limit = 1900;
+    while (!time.is_over(time_limit)) {
+        erase(time_start, time_limit);
     }
 
     auto tmp = state;
