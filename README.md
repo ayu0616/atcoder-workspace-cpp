@@ -22,7 +22,7 @@ git config --local core.hooksPath .githooks
 
 ### 使用方法
 
-vscode の設定ファイルに以下を追加する（OS によって異なる）。
+vscode の設定ファイルに以下を追加する（`osx`の部分は OS によって異なる）。
 
 ```json
 "terminal.integrated.env.osx": {
