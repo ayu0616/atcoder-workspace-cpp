@@ -55,7 +55,7 @@ class greater_heap {
    public:
     greater_heap() : q() {}
 
-    bool not_empty() { return q.empty(); }
+    bool not_empty() { return !q.empty(); }
 
     void print_all() {
         while (not_empty()) {
@@ -233,8 +233,7 @@ class Graph : vector<Vertex> {
         rep(i, n) {
             rep(j, n) {
                 for (auto e : this->at(j).edges) {
-                    if (dist[j] != LLONG_MAX &&
-                        dist[*e.to] > dist[j] + e.cost) {
+                    if (dist[j] != LLONG_MAX && dist[*e.to] > dist[j] + e.cost) {
                         dist[*e.to] = dist[j] + e.cost;
                         if (i == n - 1) dist[*e.to] = LLONG_MIN;
                     }
@@ -243,6 +242,25 @@ class Graph : vector<Vertex> {
         }
         rep(i, n) if (dist[i] == LLONG_MAX) dist[i] = -1;
         return dist;
+    }
+
+    // @brief トポロジカルソート
+    // @return トポロジカルソートされた頂点のリスト
+    vi topological_sort() {
+        vi res;
+        vb used(n, false);
+        function<void(int)> dfs = [&](int v) {
+            used[v] = true;
+            for (auto e : this->at(v).edges) {
+                if (!used[*e.to]) dfs(*e.to);
+            }
+            res.push_back(v);
+        };
+        rep(i, n) {
+            if (!used[i]) dfs(i);
+        }
+        reverse(all(res));
+        return res;
     }
 
     vector<Edge> operator[](int id) { return this->at(id).edges; }
@@ -392,9 +410,7 @@ class static_modint {
     }
     // 逆元を求める
     inline static_modint inv() const { return pow(mod - 2); }
-    inline static_modint &operator/=(const static_modint &a) {
-        return (*this) *= a.inv();
-    }
+    inline static_modint &operator/=(const static_modint &a) { return (*this) *= a.inv(); }
     inline static_modint operator/(const static_modint &a) const {
         static_modint res(*this);
         return res /= a;
@@ -419,7 +435,7 @@ constexpr int digit_sum(T n) {
 
 template <class T>
 inline istream &operator>>(istream &is, vector<T> &v) {
-    for(auto &i : v) is >> i;
+    for (auto &i : v) is >> i;
     return is;
 }
 
