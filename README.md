@@ -15,3 +15,19 @@
 ```sh
 git config --local core.hooksPath .githooks
 ```
+
+## scripts 内のスクリプトについて
+
+便利なコマンドをまとめている。
+
+### 使用方法
+
+vscode の設定ファイルに以下を追加する（OS によって異なる）。
+
+```json
+"terminal.integrated.env.osx": {
+    "PATH": "${env:PATH}:${workspaceFolder}/scripts"
+}
+```
+
+こうすることで、vscode のターミナルでスクリプトを実行できるようになる。
