@@ -118,7 +118,7 @@
             "filesystem": "cpp"
         },
         "terminal.integrated.env.osx": {
-            "PATH": "${env:PATH}:${workspaceFolder}/bin"
+            "PATH": "${env:PATH}:${workspaceFolder}/scripts"
         }
     }
 }
