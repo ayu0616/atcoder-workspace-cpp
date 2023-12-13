@@ -11,8 +11,8 @@ metadata.json
 *.dSYM
 main
 main[0-9]
-main.cpp
-main[0-9].cpp
+*-combined.cpp
+
 
 test
 
