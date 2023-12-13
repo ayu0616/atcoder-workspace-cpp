@@ -262,6 +262,10 @@ int main() {
     state.dfs(0, 0);
     auto [x, y] = state.path.back();
     state.insert_path(x, y, 0, 0, state.path.end());
+    state.path.insert(state.path.end(), state.path.begin() + 1, state.path.end());
+    // state.path.insert(state.path.end(), state.path.begin() + 1, state.path.end());
+    rep(i, N) rep(j, N) state.grid_cnt[i][j] *= 2;
+    state.grid_cnt[0][0]--;
     state.calc_score();
 
     const double start_temp = N * (d_sum / N / N), end_temp = N * 10;
