@@ -6,9 +6,14 @@
 #define is_debug false
 #endif
 
+constexpr double h_v_cospa_threshold = 1;  // この値以下のコスパのプロジェクトは捨てる
+constexpr double p_w_cospa_threshold = 1;  // この値以上のコスパのカードを選ぶ
+
 int N, M, K, T;
-int money = 0;  // 所持金
-int cap_inc_count = 0;
+int turn = 0;                  // 現在のターン
+int money = 0;                 // 所持金
+int cap_inc_count = 0;         // 増資した回数
+int want_to_remove_count = 0;  // 捨てたいプロジェクトの数
 struct Project;
 struct Card;
 struct CardCandidate;
@@ -86,6 +91,7 @@ void init_in() {
             int h, v;
             cin >> h >> v;
             projects[i] = {h, v};
+            if (projects[i].cost_performance() < h_v_cospa_threshold) want_to_remove_count++;
         }
         rep(i, T) rep(j, M) {
             int h, v;
@@ -112,6 +118,7 @@ void init_in() {
             int h, v;
             cin >> h >> v;
             projects[i] = {h, v};
+            if (projects[i].cost_performance() < h_v_cospa_threshold) want_to_remove_count++;
         }
     }
 }
@@ -121,6 +128,9 @@ void update_project(int c, int p) {
     Card card = cards[c];
     if (card.type == CardType::FULL_POWER_WORK || card.type == CardType::CONVERT || card.type == CardType::CAPITAL_INCREASE) {
         p = 0;
+    }
+    if (card.type == CardType::CAPITAL_INCREASE) {
+        cap_inc_count++;
     }
     cout << c << " " << p << endl;
     if (is_debug) {
@@ -160,6 +170,10 @@ void update_project(int c, int p) {
             projects[i] = {h, v};
         }
     }
+    want_to_remove_count = 0;
+    rep(i, M) {
+        if (projects[i].cost_performance() < h_v_cospa_threshold) want_to_remove_count++;
+    }
 }
 
 void get_money() {
@@ -185,13 +199,35 @@ vector<CardCandidate> get_candidates() {
 
 // カード候補の選択
 int choose_card_cand(int c, vector<CardCandidate> candidates) {
-    // sort(all(candidates), [](const CardCandidate& a, const CardCandidate& b) { return a.cost_performance() > b.cost_performance(); });
-    // CardCandidate cand;
-    // while (cand = candidates.back(), cand.p > money) {
-    //     candidates.pop_back();
-    // }
-    // int r = cand.id;
     int r = 0;
+    if (want_to_remove_count > M * 3 / 4) {
+        int min_cost = 1e9, min_cost_index = -1;
+        rep(i, K) {
+            if (candidates[i].type == CardType::CONVERT && candidates[i].p <= money && chmin(min_cost, candidates[i].p)) {
+                min_cost_index = i;
+            }
+        }
+        if (min_cost_index != -1) {
+            r = min_cost_index;
+        }
+    } else {
+        double max_cost_performance = 0;
+        rep(i, K) {
+            if (candidates[i].p <= money && chmax(max_cost_performance, candidates[i].cost_performance())) {
+                r = i;
+            }
+        }
+        if (max_cost_performance < p_w_cospa_threshold) {
+            r = 0;
+        }
+    }
+    if (turn < 1000 / 2 && cap_inc_count < 20) {
+        rep(i, K) {
+            if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= money) {
+                r = i;
+            }
+        }
+    }
     cout << r << endl;
     return r;
 }
@@ -207,22 +243,41 @@ void update_card(int c) {
 int main() {
     init_in();
 
-    rep(turn, T) {
-        double max_cost_performance = 0;
-        int max_cost_performance_index = -1;
-        rep(i, M) {
-            if (chmax(max_cost_performance, projects[i].cost_performance())) {
-                max_cost_performance_index = i;
-            }
-        }
-        int max_performance_card_index = -1, max_performance_card = 0;
+    while (T--) {
+        turn++;
+        int c = 0, p = 0;
+        bool has_convert = false;
         rep(i, N) {
-            if (chmax(max_performance_card, cards[i].performance())) {
-                max_performance_card_index = i;
+            if (cards[i].type == CardType::CONVERT) {
+                has_convert = true;
+                c = i;
+                break;
             }
         }
-        int c = max_performance_card_index;
-        update_project(c, max_cost_performance_index);
+        if (!(want_to_remove_count > M * 3 / 4 && has_convert)) {
+            double max_cost_performance = 0;
+            int max_cost_performance_index = -1;
+            rep(i, M) {
+                if (chmax(max_cost_performance, projects[i].cost_performance())) {
+                    max_cost_performance_index = i;
+                }
+            }
+            int max_performance_card_index = -1, max_performance_card = -1;
+            rep(i, N) {
+                if (chmax(max_performance_card, cards[i].performance())) {
+                    max_performance_card_index = i;
+                }
+            }
+            p = max_cost_performance_index;
+            c = max_performance_card_index;
+            rep(i, N) {
+                if (cards[i].type == CardType::CAPITAL_INCREASE) {
+                    c = i;
+                    break;
+                }
+            }
+        }
+        update_project(c, p);
         get_money();
         update_card(c);
     }
