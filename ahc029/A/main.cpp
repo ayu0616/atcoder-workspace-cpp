@@ -6,7 +6,7 @@
 #define is_debug false
 #endif
 
-constexpr double h_v_cospa_threshold = 1;  // この値以下のコスパのプロジェクトは捨てる
+constexpr double h_v_cospa_threshold = 1;    // この値以下のコスパのプロジェクトは捨てる
 constexpr double p_w_cospa_threshold = 1.5;  // この値以上のコスパのカードを選ぶ
 
 int N, M, K, T;
@@ -218,7 +218,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
             r = 0;
         }
     }
-    if (turn < 1000 / 2 && cap_inc_count < 20) {
+    if (turn < 1000 - 1000 / (cap_inc_count+2) && cap_inc_count < 20) {
         int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
             if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= min(money, 400 * pow(2, cap_inc_count)) &&
