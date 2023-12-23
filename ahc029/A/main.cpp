@@ -17,7 +17,6 @@ int want_to_remove_count = 0;  // 捨てたいプロジェクトの数
 struct Project;
 struct Card;
 struct CardCandidate;
-vector<Card> cards;                     // 手持ちのカード
 vector<Project> projects;               // 進行中のプロジェクト
 queue<Project> debug_projects;          // デバッグ用のプロジェクト
 queue<CardCandidate> debug_candidates;  // デバッグ用のカード候補
@@ -40,6 +39,38 @@ struct Card {
         }
     }
 };
+
+struct Cards {
+    vector<Card> cards;
+
+    Card& operator[](int i) { return cards[i]; }
+    const Card& operator[](int i) const { return cards[i]; }
+
+    void resize(int N) { cards.resize(N); }
+
+    int convert_idx() const {
+        rep(i, cards.size()) {
+            if (cards[i].type == CardType::CONVERT) return i;
+        }
+        return -1;
+    }
+
+    int cancel_idx() const {
+        rep(i, cards.size()) {
+            if (cards[i].type == CardType::CANCEL) return i;
+        }
+        return -1;
+    }
+
+    int capital_increase_idx() const {
+        rep(i, cards.size()) {
+            if (cards[i].type == CardType::CAPITAL_INCREASE) return i;
+        }
+        return -1;
+    }
+};
+
+Cards cards;  // 手持ちのカード
 
 // カード候補
 struct CardCandidate : Card {
@@ -218,7 +249,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
             r = 0;
         }
     }
-    if (turn < 1000 - 1000 / (cap_inc_count+2) && cap_inc_count < 20) {
+    if (turn < 1000 - 1000 / (cap_inc_count + 2) && cap_inc_count < 20) {
         int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
             if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= min(money, 400 * pow(2, cap_inc_count)) &&
