@@ -74,6 +74,15 @@ struct Cards {
         }
         return -1;
     }
+
+    vi performance_order_idx() const {
+        vi r;
+        rep(i, cards.size()) {
+            if (cards[i].type == CardType::NORMAL_WORK || cards[i].type == CardType::FULL_POWER_WORK) r.push_back(i);
+        }
+        sort(all(r), [&](int i, int j) { return cards[i].performance() > cards[j].performance(); });
+        return r;
+    }
 };
 
 Cards cards;  // 手持ちのカード
@@ -100,6 +109,16 @@ struct Project {
 
     // 完了したかどうか
     bool is_completed() const { return rest <= 0; }
+
+    // 高いコスパかどうか
+    bool is_high_cospa() const { return cost_performance() >= h_v_cospa_threshold; }
+
+    static vi cospa_order_idx() {
+        vi r(M);
+        rep(i, M) r[i] = i;
+        sort(all(r), [&](int i, int j) { return projects[i].cost_performance() > projects[j].cost_performance(); });
+        return r;
+    }
 };
 
 CardCandidate debug_card_pop() {
@@ -131,7 +150,7 @@ void init_in() {
             int h, v;
             cin >> h >> v;
             projects[i] = {h, v};
-            if (projects[i].cost_performance() < h_v_cospa_threshold) want_to_remove_count++;
+            if (!projects[i].is_high_cospa()) want_to_remove_count++;
         }
         rep(i, T) rep(j, M) {
             int h, v;
@@ -158,7 +177,7 @@ void init_in() {
             int h, v;
             cin >> h >> v;
             projects[i] = {h, v};
-            if (projects[i].cost_performance() < h_v_cospa_threshold) want_to_remove_count++;
+            if (!projects[i].is_high_cospa()) want_to_remove_count++;
         }
     }
 }
@@ -209,7 +228,7 @@ void update_project(int c, int p) {
     }
     want_to_remove_count = 0;
     rep(i, M) {
-        if (projects[i].cost_performance() < h_v_cospa_threshold) want_to_remove_count++;
+        if (!projects[i].is_high_cospa()) want_to_remove_count++;
     }
 }
 
