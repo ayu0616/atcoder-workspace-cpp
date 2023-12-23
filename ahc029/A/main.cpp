@@ -7,11 +7,11 @@
 #endif
 
 constexpr double h_v_cospa_threshold = 1;  // この値以下のコスパのプロジェクトは捨てる
-constexpr double p_w_cospa_threshold = 1;  // この値以上のコスパのカードを選ぶ
+constexpr double p_w_cospa_threshold = 1.5;  // この値以上のコスパのカードを選ぶ
 
 int N, M, K, T;
 int turn = 0;                  // 現在のターン
-ll money = 0;                 // 所持金
+ll money = 0;                  // 所持金
 int cap_inc_count = 0;         // 増資した回数
 int want_to_remove_count = 0;  // 捨てたいプロジェクトの数
 struct Project;
@@ -219,11 +219,19 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
         }
     }
     if (turn < 1000 / 2 && cap_inc_count < 20) {
+        int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
-            if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= money) {
-                r = i;
+            if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= min(money, 600 * pow(2, cap_inc_count)) &&
+                chmin(min_cost, candidates[i].p)) {
+                min_cost_index = i;
             }
         }
+        if (min_cost_index != -1) {
+            r = min_cost_index;
+        }
+    } else if (turn == 1000) {
+        cout << 0 << endl;
+        return 0;
     }
     cout << r << endl;
     return r;
