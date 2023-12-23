@@ -21,7 +21,13 @@ vector<Project> projects;               // 進行中のプロジェクト
 queue<Project> debug_projects;          // デバッグ用のプロジェクト
 queue<CardCandidate> debug_candidates;  // デバッグ用のカード候補
 
-enum class CardType { NORMAL_WORK, FULL_POWER_WORK, CANCEL, CONVERT, CAPITAL_INCREASE };
+enum class CardType {
+    NORMAL_WORK,      // 通常労働
+    FULL_POWER_WORK,  // 全力労働
+    CANCEL,           // キャンセル
+    CONVERT,          // 業務転換
+    CAPITAL_INCREASE  // 増資
+};
 
 struct Card {
     CardType type;  // カードのタイプ
@@ -111,6 +117,9 @@ Project debug_project_pop() {
     p.value *= pow(2, cap_inc_count);
     return p;
 }
+
+// 業務転換が必要かどうか
+bool have_to_convert() { return want_to_remove_count > M * 3 / 4; }
 
 // 初期値の入力
 void init_in() {
@@ -228,7 +237,7 @@ vector<CardCandidate> get_candidates() {
 // カード候補の選択
 int choose_card_cand(int c, vector<CardCandidate> candidates) {
     int r = 0;
-    if (want_to_remove_count > M * 3 / 4) {
+    if (have_to_convert()) {
         int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
             if (candidates[i].type == CardType::CONVERT && candidates[i].p <= money && chmin(min_cost, candidates[i].p)) {
@@ -282,15 +291,22 @@ int main() {
     while (T--) {
         turn++;
         int c = 0, p = 0;
-        bool has_convert = false;
-        rep(i, N) {
-            if (cards[i].type == CardType::CONVERT) {
-                has_convert = true;
-                c = i;
-                break;
+        int convert_idx = cards.convert_idx();
+        int cancel_idx = cards.cancel_idx();
+        int capital_increase_idx = cards.capital_increase_idx();
+        if (have_to_convert() && convert_idx != -1) {
+            c = convert_idx;
+        } else if (want_to_remove_count >= 1 && cancel_idx != -1) {
+            c = cancel_idx;
+            double min_cospa = 1e9;
+            rep(i, M) {
+                if (chmin(min_cospa, projects[i].cost_performance())) {
+                    p = i;
+                }
             }
-        }
-        if (!(want_to_remove_count > M * 3 / 4 && has_convert)) {
+        } else if (capital_increase_idx != -1) {
+            c = capital_increase_idx;
+        } else {
             double max_cost_performance = 0;
             int max_cost_performance_index = -1;
             rep(i, M) {
@@ -306,12 +322,6 @@ int main() {
             }
             p = max_cost_performance_index;
             c = max_performance_card_index;
-            rep(i, N) {
-                if (cards[i].type == CardType::CAPITAL_INCREASE) {
-                    c = i;
-                    break;
-                }
-            }
         }
         update_project(c, p);
         get_money();
