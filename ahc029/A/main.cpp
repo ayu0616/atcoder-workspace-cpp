@@ -11,7 +11,7 @@ constexpr double p_w_cospa_threshold = 1;  // この値以上のコスパのカ�
 
 int N, M, K, T;
 int turn = 0;                  // 現在のターン
-int money = 0;                 // 所持金
+ll money = 0;                 // 所持金
 int cap_inc_count = 0;         // 増資した回数
 int want_to_remove_count = 0;  // 捨てたいプロジェクトの数
 struct Project;
@@ -128,9 +128,6 @@ void update_project(int c, int p) {
     Card card = cards[c];
     if (card.type == CardType::FULL_POWER_WORK || card.type == CardType::CONVERT || card.type == CardType::CAPITAL_INCREASE) {
         p = 0;
-    }
-    if (card.type == CardType::CAPITAL_INCREASE) {
-        cap_inc_count++;
     }
     cout << c << " " << p << endl;
     if (is_debug) {
@@ -280,5 +277,9 @@ int main() {
         update_project(c, p);
         get_money();
         update_card(c);
+        assert(money >= 0);
+    }
+    if (is_debug) {
+        cerr << money << endl;
     }
 }
