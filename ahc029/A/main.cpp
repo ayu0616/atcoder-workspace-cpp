@@ -309,7 +309,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
     if (turn < 1000 - 1000 / (cap_inc_count + 2) && cap_inc_count < 20) {
         int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
-            if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= min(money, 400 * pow(2, cap_inc_count)) &&
+            if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= min(money * 23 / 32, 400 * pow(2, cap_inc_count)) &&
                 chmin(min_cost, candidates[i].p)) {
                 min_cost_index = i;
             }
