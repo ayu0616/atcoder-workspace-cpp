@@ -303,27 +303,8 @@ vector<CardCandidate> get_candidates() {
 
 // カード候補の選択
 int choose_card_cand(int c, vector<CardCandidate> candidates) {
-    int r = 0;
-    if (have_to_convert()) {
-        int min_cost = 1e9, min_cost_index = -1;
-        rep(i, K) {
-            if (candidates[i].type == CardType::CONVERT && candidates[i].p <= money && chmin(min_cost, candidates[i].p)) {
-                min_cost_index = i;
-            }
-        }
-        if (min_cost_index != -1) {
-            r = min_cost_index;
-        }
-    } else {
-        double max_cost_performance = 0;
-        rep(i, K) {
-            if (candidates[i].p <= money && chmax(max_cost_performance, candidates[i].cost_performance())) {
-                r = i;
-            }
-        }
-        if (max_cost_performance < p_w_cospa_threshold) {
-            r = 0;
-        }
+    if (turn == 1000) {
+        return 0;
     }
     if (turn < 1000 - 1000 / (cap_inc_count + 2) && cap_inc_count < 20) {
         int min_cost = 1e9, min_cost_index = -1;
@@ -334,13 +315,32 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
             }
         }
         if (min_cost_index != -1) {
-            r = min_cost_index;
+            return min_cost_index;
         }
-    } else if (turn == 1000) {
-        cout << 0 << endl;
-        return 0;
     }
-    cout << r << endl;
+    if (have_to_convert()) {
+        int min_cost = 1e9, min_cost_index = -1;
+        rep(i, K) {
+            if (candidates[i].type == CardType::CONVERT && candidates[i].p <= money && chmin(min_cost, candidates[i].p)) {
+                min_cost_index = i;
+            }
+        }
+        if (min_cost_index != -1) {
+            return min_cost_index;
+        }
+    }
+
+    int r = 0;
+    double max_cost_performance = 0;
+    rep(i, K) {
+        if (candidates[i].p <= money && chmax(max_cost_performance, candidates[i].cost_performance())) {
+            r = i;
+        }
+    }
+    if (max_cost_performance < p_w_cospa_threshold) {
+        r = 0;
+    }
+
     return r;
 }
 
@@ -348,6 +348,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
 void update_card(int c) {
     auto candidates = get_candidates();
     int r = choose_card_cand(c, candidates);
+    cout << r << endl;
     cards[c] = candidates[r];
     money -= candidates[r].p;
 }
