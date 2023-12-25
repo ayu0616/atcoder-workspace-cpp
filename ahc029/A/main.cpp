@@ -318,6 +318,18 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
             return min_cost_index;
         }
     }
+    if (cards.convert_idx() == -1) {
+        int min_cost = 1e9, min_cost_index = -1;
+        rep(i, K) {
+            if (candidates[i].type == CardType::CONVERT && candidates[i].p <= min(money / 16, 2.5 * pow(2, cap_inc_count)) &&
+                chmin(min_cost, candidates[i].p)) {
+                min_cost_index = i;
+            }
+        }
+        if (min_cost_index != -1) {
+            return min_cost_index;
+        }
+    }
     if (have_to_convert()) {
         int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
