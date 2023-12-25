@@ -184,16 +184,16 @@ void init_in() {
 
 // 出すカードと対象プロジェクトの選択
 pii choose_card() {
-    int c = -1, p = 0;
     int convert_idx = cards.convert_idx();
     int cancel_idx = cards.cancel_idx();
     int capital_increase_idx = cards.capital_increase_idx();
     if (have_to_convert() && convert_idx != -1) {
-        c = convert_idx;
-        return {c, p};
+        int c = convert_idx;
+        return {c, 0};
     }
     if (want_to_remove_count >= 1 && cancel_idx != -1) {
-        c = cancel_idx;
+        int c = cancel_idx;
+        int p = 0;
         double min_cospa = 1e9;
         rep(i, M) {
             if (chmin(min_cospa, projects[i].cost_performance())) {
@@ -203,8 +203,8 @@ pii choose_card() {
         return {c, p};
     }
     if (capital_increase_idx != -1) {
-        c = capital_increase_idx;
-        return {c, p};
+        int c = capital_increase_idx;
+        return {c, 0};
     }
 
     double max_cost_performance = 0;
@@ -220,8 +220,8 @@ pii choose_card() {
             max_performance_card_index = i;
         }
     }
-    p = max_cost_performance_index;
-    c = max_performance_card_index;
+    int p = max_cost_performance_index;
+    int c = max_performance_card_index;
 
     if (c == -1) {
         c = 0;
