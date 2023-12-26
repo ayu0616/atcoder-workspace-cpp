@@ -6,8 +6,8 @@
 #define is_debug false
 #endif
 
-constexpr double h_v_cospa_threshold = 1;    // この値以下のコスパのプロジェクトは捨てる
-constexpr double p_w_cospa_threshold = 1.5;  // この値以上のコスパのカードを選ぶ
+constexpr double h_v_cospa_threshold = 1.1;    // この値以下のコスパのプロジェクトは捨てる
+constexpr double p_w_cospa_threshold = 1.3;  // この値以上のコスパのカードを選ぶ
 
 int N, M, K, T;
 int turn = 0;                  // 現在のターン
