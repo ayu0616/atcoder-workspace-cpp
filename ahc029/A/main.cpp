@@ -349,6 +349,14 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
         }
     }
 
+    if (N >= 3 && r == 0 && cards.convert_idx() == -1) {
+        rep(i, K) {
+            if (candidates[i].type == CardType::CONVERT && candidates[i].p == 0) {
+                return i;
+            }
+        }
+    }
+
     return r;
 }
 
