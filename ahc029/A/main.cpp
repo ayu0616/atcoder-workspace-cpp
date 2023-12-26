@@ -318,13 +318,6 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
             return min_cost_index;
         }
     }
-    if (cards.convert_idx() == -1) {
-        rep(i, K) {
-            if (candidates[i].type == CardType::CONVERT && candidates[i].p == 0) {
-                return i;
-            }
-        }
-    }
     if (have_to_convert()) {
         int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
@@ -346,6 +339,14 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
     }
     if (max_cost_performance < p_w_cospa_threshold) {
         r = 0;
+    }
+
+    if (r == 0 && cards.cancel_idx() == -1) {
+        rep(i, K) {
+            if (candidates[i].type == CardType::CANCEL && candidates[i].p == 0) {
+                return i;
+            }
+        }
     }
 
     return r;
