@@ -54,18 +54,20 @@ struct Cards {
 
     void resize(int N) { cards.resize(N); }
 
-    int convert_idx() const {
+    vi convert_idx() const {
+        vi r;
         rep(i, cards.size()) {
-            if (cards[i].type == CardType::CONVERT) return i;
+            if (cards[i].type == CardType::CONVERT) r.push_back(i);
         }
-        return -1;
+        return r;
     }
 
-    int cancel_idx() const {
+    vi cancel_idx() const {
+        vi r;
         rep(i, cards.size()) {
-            if (cards[i].type == CardType::CANCEL) return i;
+            if (cards[i].type == CardType::CANCEL) r.push_back(i);
         }
-        return -1;
+        return r;
     }
 
     int capital_increase_idx() const {
@@ -184,15 +186,15 @@ void init_in() {
 
 // 出すカードと対象プロジェクトの選択
 pii choose_card() {
-    int convert_idx = cards.convert_idx();
-    int cancel_idx = cards.cancel_idx();
+    vi convert_idx = cards.convert_idx();
+    vi cancel_idx = cards.cancel_idx();
     int capital_increase_idx = cards.capital_increase_idx();
-    if (have_to_convert() && convert_idx != -1) {
-        int c = convert_idx;
+    if (have_to_convert() && convert_idx.size()) {
+        int c = convert_idx.back();
         return {c, 0};
     }
-    if (want_to_remove_count >= 1 && cancel_idx != -1) {
-        int c = cancel_idx;
+    if (want_to_remove_count >= 1 && cancel_idx.size()) {
+        int c = cancel_idx.back();
         int p = 0;
         double min_cospa = 1e9;
         rep(i, M) {
@@ -341,7 +343,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
         r = 0;
     }
 
-    if (r == 0 && cards.cancel_idx() == -1) {
+    if (r == 0 && cards.cancel_idx().size()<(1+N/5)) {
         rep(i, K) {
             if (candidates[i].type == CardType::CANCEL && candidates[i].p == 0) {
                 return i;
@@ -349,7 +351,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
         }
     }
 
-    if (N >= 3 && r == 0 && cards.convert_idx() == -1) {
+    if (N >= 3 && r == 0 && cards.convert_idx().size() < (1+N/5)) {
         rep(i, K) {
             if (candidates[i].type == CardType::CONVERT && candidates[i].p == 0) {
                 return i;
