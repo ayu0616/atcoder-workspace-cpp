@@ -6,7 +6,7 @@
 #define is_debug false
 #endif
 
-constexpr double h_v_cospa_threshold = 1.1;    // この値以下のコスパのプロジェクトは捨てる
+constexpr double h_v_cospa_threshold = 1.1;  // この値以下のコスパのプロジェクトは捨てる
 constexpr double p_w_cospa_threshold = 1.3;  // この値以上のコスパのカードを選ぶ
 
 int N, M, K, T;
@@ -20,6 +20,15 @@ struct CardCandidate;
 vector<Project> projects;               // 進行中のプロジェクト
 queue<Project> debug_projects;          // デバッグ用のプロジェクト
 queue<CardCandidate> debug_candidates;  // デバッグ用のカード候補
+map<int, int> card_count;               // カードの枚数
+
+double card_ratio(int id) {
+    double total = 0.0;
+    for (auto& [_, v] : card_count) {
+        total += v;
+    }
+    return static_cast<double>(card_count[id]) / total;
+}
 
 enum class CardType {
     NORMAL_WORK,      // 通常労働
@@ -311,8 +320,8 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
     if (turn < 1000 - 1000 / (cap_inc_count + 2) && cap_inc_count < 20) {
         int min_cost = 1e9, min_cost_index = -1;
         rep(i, K) {
-            if (candidates[i].type == CardType::CAPITAL_INCREASE && candidates[i].p <= min(money * 23 / 32, 400 * pow(2, cap_inc_count)) &&
-                chmin(min_cost, candidates[i].p)) {
+            if (candidates[i].type == CardType::CAPITAL_INCREASE &&
+                candidates[i].p <= min(money * 23 / 32, (450 * (1 - card_ratio(4) / 2)) * pow(2, cap_inc_count)) && chmin(min_cost, candidates[i].p)) {
                 min_cost_index = i;
             }
         }
@@ -343,7 +352,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
         r = 0;
     }
 
-    if (r == 0 && cards.cancel_idx().size()<(1+N/5)) {
+    if (r == 0 && cards.cancel_idx().size() < (1 + N / 5)) {
         rep(i, K) {
             if (candidates[i].type == CardType::CANCEL && candidates[i].p == 0) {
                 return i;
@@ -351,7 +360,7 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
         }
     }
 
-    if (N >= 3 && r == 0 && cards.convert_idx().size() < (1+N/5)) {
+    if (N >= 3 && r == 0 && cards.convert_idx().size() < (1 + N / 5)) {
         rep(i, K) {
             if (candidates[i].type == CardType::CONVERT && candidates[i].p == 0) {
                 return i;
@@ -365,6 +374,9 @@ int choose_card_cand(int c, vector<CardCandidate> candidates) {
 // カードの更新
 void update_card(int c) {
     auto candidates = get_candidates();
+    for (auto& candidate : candidates) {
+        card_count[static_cast<int>(candidate.type)]++;
+    }
     int r = choose_card_cand(c, candidates);
     cout << r << endl;
     cards[c] = candidates[r];
