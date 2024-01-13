@@ -14,7 +14,9 @@ using vvb = vector<vb>;
 using pii = pair<int, int>;
 using pll = pair<ll, ll>;
 using vpii = vector<pii>;
+using vvpii = vector<vpii>;
 using vpll = vector<pll>;
+using vvpll = vector<vpll>;
 
 // マクロ
 #define ov3(a, b, c, name, ...) name

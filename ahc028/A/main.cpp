@@ -36,6 +36,8 @@ struct Random {
 
 Random rnd;
 
+vector<vector<vector<pii>>> pos_memo;
+
 struct State {
     vi order;
     vpii ans;
@@ -92,13 +94,19 @@ struct State {
         for (auto c : s) {
             int min_d = 1e9;
             int tmp_i, tmp_j;
-            for (auto p : positions[c]) {
-                int d = abs(p.first - si) + abs(p.second - sj);
-                if (d < min_d) {
-                    min_d = d;
-                    tmp_i = p.first;
-                    tmp_j = p.second;
+            if (pos_memo[si][sj][c - 'A'].first != -1) {
+                tmp_i = pos_memo[si][sj][c - 'A'].first;
+                tmp_j = pos_memo[si][sj][c - 'A'].second;
+            } else {
+                for (auto p : positions[c]) {
+                    int d = abs(p.first - si) + abs(p.second - sj);
+                    if (d < min_d) {
+                        min_d = d;
+                        tmp_i = p.first;
+                        tmp_j = p.second;
+                    }
                 }
+                pos_memo[si][sj][c - 'A'] = {tmp_i, tmp_j};
             }
             _ans.emplace_back(tmp_i, tmp_j);
             si = tmp_i, sj = tmp_j;
@@ -131,6 +139,8 @@ int main() {
     Time time;
 
     rep(i, N) rep(j, N) { positions[A[i][j]].emplace_back(i, j); }
+
+    pos_memo.resize(N, vector<vector<pii>>(N, vector<pii>(26, {-1, -1})));
 
     State state;
 
