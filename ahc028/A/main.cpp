@@ -18,6 +18,24 @@ struct Time {
     bool is_over(ll limit) { return get() > limit; }
 };
 
+struct Random {
+    mt19937 mt;
+
+    Random() { mt.seed(616); }
+
+    double operator()() { return (double)mt() / mt.max(); }
+
+    int random_int(int min, int max) { return min + (int)(mt() * (max - min + 1.0) / (1.0 + mt.max())); }
+
+    template <typename T>
+    T random_choice(vector<T> &v) {
+        int idx = random_int(0, v.size() - 1);
+        return v[idx];
+    }
+};
+
+Random rnd;
+
 struct State {
     vi order;
     vpii ans;
@@ -26,8 +44,32 @@ struct State {
     State() { init(); }
 
     void init() {
-        order.resize(M);
-        rep(i, M) order[i] = i;
+        order.push_back(0);
+        set<int> used;
+        used.insert(0);
+        int cand = 0;
+        int max_len = 0;
+        while (used.size() < M) {
+            int cur = order.back();
+            rep(i, M) {
+                if (used.find(i) != used.end()) continue;
+                if (cur == i) continue;
+                rep(i, 5 - max_len) {
+                    string s1 = t[cur].substr(t[cur].size() - 5 + i);
+                    string s2 = t[i].substr(0, 5 - i);
+                    if (s1 == s2) {
+                        cand = i;
+                        max_len = 5 - i;
+                        break;
+                    }
+                }
+            }
+            while (used.find(cand) != used.end()) {
+                cand = rnd.random_int(0, M - 1);
+            }
+            order.push_back(cand);
+            used.insert(cand);
+        }
         ans = calc_ans();
     }
 
@@ -45,8 +87,7 @@ struct State {
                     break;
                 }
             }
-            if (!ok)
-            s += t[order[i]];
+            if (!ok) s += t[order[i]];
         }
         for (auto c : s) {
             int min_d = 1e9;
@@ -95,8 +136,8 @@ int main() {
 
     while (true) {
         if (time.is_over(TIME_LIMIT)) break;
-        int i = rand() % M;
-        int j = rand() % M;
+        int i = rnd.random_int(0, M - 1);
+        int j = rnd.random_int(0, M - 1);
         if (i == j) continue;
         State next = state.next(i, j);
         if (next.calc_score() > state.calc_score()) {
