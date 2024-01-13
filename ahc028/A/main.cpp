@@ -33,21 +33,34 @@ struct State {
 
     vpii calc_ans() {
         vpii _ans;
-        for (auto i : order) {
-            for (auto c : t[i]) {
-                int min_d = 1e9;
-                int tmp_i, tmp_j;
-                for (auto p : positions[c]) {
-                    int d = abs(p.first - si) + abs(p.second - sj);
-                    if (d < min_d) {
-                        min_d = d;
-                        tmp_i = p.first;
-                        tmp_j = p.second;
-                    }
+        string s = t[order[0]];
+        rep(i, 1, M) {
+            bool ok = false;
+            rep(j, 5) {
+                string s1 = s.substr(s.size() - 5 + j);
+                string s2 = t[order[i]].substr(0, 5 - j);
+                if (s1 == s2) {
+                    s += t[order[i]].substr(5 - j);
+                    ok = true;
+                    break;
                 }
-                _ans.emplace_back(tmp_i, tmp_j);
-                si = tmp_i, sj = tmp_j;
             }
+            if (!ok)
+            s += t[order[i]];
+        }
+        for (auto c : s) {
+            int min_d = 1e9;
+            int tmp_i, tmp_j;
+            for (auto p : positions[c]) {
+                int d = abs(p.first - si) + abs(p.second - sj);
+                if (d < min_d) {
+                    min_d = d;
+                    tmp_i = p.first;
+                    tmp_j = p.second;
+                }
+            }
+            _ans.emplace_back(tmp_i, tmp_j);
+            si = tmp_i, sj = tmp_j;
         }
         return _ans;
     }
@@ -64,6 +77,7 @@ struct State {
         State res = *this;
         swap(res.order[i], res.order[j]);
         res.ans = res.calc_ans();
+        res.score = -1;
         return res;
     }
 };
