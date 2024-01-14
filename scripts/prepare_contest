@@ -74,6 +74,11 @@ def gen():
 
 def wait():
     """コンテスト開始まで待機する"""
+    print("メモの準備はしましたか？")
+    print("メモのタイトル:", contest.upper())
+    print()
+    print("F5実行は、「Python: submit」になっていますか？")
+    print()
     now = datetime.datetime.now()
     start_time = datetime.datetime(now.year, now.month, now.day, now.hour + 1, 0, 0)
     waiting_time = int((start_time - now).total_seconds())
