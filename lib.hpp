@@ -30,10 +30,10 @@ using vvpll = vector<vpll>;
 #define debug(x) cerr << #x << ": " << x << '\n'
 
 // 移動
-int dx4[4] = {1, 0, -1, 0};                // 4方向移動用
-int dy4[4] = {0, 1, 0, -1};                // 4方向移動用
-int dx8[8] = {1, 1, 0, -1, -1, -1, 0, 1};  // 8方向移動用
-int dy8[8] = {0, 1, 1, 1, 0, -1, -1, -1};  // 8方向移動用
+constexpr int dx4[4] = {1, 0, -1, 0};                // 4方向移動用
+constexpr int dy4[4] = {0, 1, 0, -1};                // 4方向移動用
+constexpr int dx8[8] = {1, 1, 0, -1, -1, -1, 0, 1};  // 8方向移動用
+constexpr int dy8[8] = {0, 1, 1, 1, 0, -1, -1, -1};  // 8方向移動用
 
 // 最大値
 constexpr int INT_INF = 1 << 30;  // intの最大値
