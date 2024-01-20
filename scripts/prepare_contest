@@ -74,6 +74,7 @@ def gen():
 
 def wait():
     """コンテスト開始まで待機する"""
+    print()
     print("メモの準備はしましたか？")
     print("メモのタイトル:", contest.upper())
     print()
