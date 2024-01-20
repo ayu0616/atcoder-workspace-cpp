@@ -125,6 +125,54 @@ constexpr auto max(set<T> a) {
     return *max_element(a.begin(), a.end());
 }
 
+template <class T = int>
+class UnionFind {
+    vector<T> par, rank, siz;
+
+   public:
+    // @param n 要素数
+    inline UnionFind(T n) {
+        par = vector<T>(n, -1);
+        rank = vector<T>(n, 0);
+        siz = vector<T>(n, 1);
+    }
+
+    // xの根を求める
+    inline T root(T x) {
+        if (par[x] == -1)
+            return x;
+        else
+            return par[x] = root(par[x]);
+    }
+
+    // xとyが同じグループに属するかどうか（根が一致するかどうか）
+    inline bool same(T x, T y) { return root(x) == root(y); }
+
+    // xを含むグループとyを含むグループとを併合する
+    inline void unite(T x, T y) {
+        x = root(x);
+        y = root(y);
+        if (x == y) return;
+
+        if (rank[x] < rank[y]) swap(x, y);
+        par[y] = x;
+        if (rank[x] == rank[y]) rank[x]++;
+        siz[x] += siz[y];
+    }
+
+    // xを含むグループのサイズ
+    inline T size(T x) { return siz[root(x)]; }
+
+    // グループ数
+    inline T groups() {
+        T res = 0;
+        for (T i = 0; i < par.size(); i++) {
+            if (par[i] == -1) res++;
+        }
+        return res;
+    }
+};
+
 struct Edge;
 
 // @brief グラフの頂点
@@ -265,6 +313,43 @@ class Graph : vector<Vertex> {
         return res;
     }
 
+    // @brief 強連結成分分解
+    // @param rev このグラフと逆向きの辺を持つグラフ
+    UnionFind<int> scc(Graph rev) {
+        vi num;
+        vb visited(n, false);
+
+        function<void(int)> dfs;
+        dfs = [&](int v) {
+            visited[v] = true;
+            for (auto u : this->at(v).edges) {
+                if (visited[u]) continue;
+                dfs(u);
+            }
+            num.push_back(v);
+        };
+        rep(i, n) {
+            if (!visited[i]) dfs(i);
+        }
+        reverse(all(num));
+
+        rep(i, n) visited[i] = false;
+        UnionFind uf(n);
+        function<void(int)> dfs2;
+        dfs2 = [&](int v) {
+            visited[v] = true;
+            for (auto u : rev[v]) {
+                if (visited[u]) continue;
+                uf.unite(v, u);
+                dfs2(u);
+            }
+        };
+        for (auto v : num) {
+            if (!visited[v]) dfs2(v);
+        }
+        return uf;
+    }
+
     vector<Edge> operator[](int id) { return this->at(id).edges; }
 };
 
@@ -317,54 +402,6 @@ constexpr vl prime_factorize(const T n) {
     }
     return res;
 }
-
-template <class T = int>
-class UnionFind {
-    vector<T> par, rank, siz;
-
-   public:
-    // @param n 要素数
-    inline UnionFind(T n) {
-        par = vector<T>(n, -1);
-        rank = vector<T>(n, 0);
-        siz = vector<T>(n, 1);
-    }
-
-    // xの根を求める
-    inline T root(T x) {
-        if (par[x] == -1)
-            return x;
-        else
-            return par[x] = root(par[x]);
-    }
-
-    // xとyが同じグループに属するかどうか（根が一致するかどうか）
-    inline bool same(T x, T y) { return root(x) == root(y); }
-
-    // xを含むグループとyを含むグループとを併合する
-    inline void unite(T x, T y) {
-        x = root(x);
-        y = root(y);
-        if (x == y) return;
-
-        if (rank[x] < rank[y]) swap(x, y);
-        par[y] = x;
-        if (rank[x] == rank[y]) rank[x]++;
-        siz[x] += siz[y];
-    }
-
-    // xを含むグループのサイズ
-    inline T size(T x) { return siz[root(x)]; }
-
-    // グループ数
-    inline T groups() {
-        T res = 0;
-        for (T i = 0; i < par.size(); i++) {
-            if (par[i] == -1) res++;
-        }
-        return res;
-    }
-};
 
 /*
 自動的にmodを取ってくれる型
