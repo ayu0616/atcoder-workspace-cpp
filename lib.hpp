@@ -353,6 +353,58 @@ class Graph : vector<Vertex> {
     vector<Edge> operator[](int id) { return this->at(id).edges; }
 };
 
+struct SegTree {
+   private:
+    int n;
+    vl dat, lazy;
+
+   public:
+    SegTree(int _n) {
+        n = 1;
+        while (n < _n) n *= 2;
+        dat.resize(2 * n - 1, LL_INF);
+        lazy.resize(2 * n - 1, LL_INF);
+    }
+
+    void eval(int k) {
+        if (lazy[k] == LL_INF) return;
+        if (k < n - 1) {
+            lazy[k * 2 + 1] = lazy[k];
+            lazy[k * 2 + 2] = lazy[k];
+        }
+        dat[k] = lazy[k];
+        lazy[k] = LL_INF;
+    }
+
+    void update(int a, int b, ll x, int k, int l, int r) {
+        eval(k);
+        if (a <= l && r <= b) {
+            lazy[k] = x;
+            eval(k);
+        } else if (a < r && l < b) {
+            update(a, b, x, k * 2 + 1, l, (l + r) / 2);
+            update(a, b, x, k * 2 + 2, (l + r) / 2, r);
+            dat[k] = min(dat[k * 2 + 1], dat[k * 2 + 2]);
+        }
+    }
+    void update(int a, int b, ll x) { update(a, b, x, 0, 0, n); }
+
+    ll query(int a, int b, int k, int l, int r) {
+        eval(k);
+        if (r <= a || b <= l) return LL_INF;
+        if (a <= l && r <= b) return dat[k];
+
+        ll vl = query(a, b, k * 2 + 1, l, (l + r) / 2);
+        ll vr = query(a, b, k * 2 + 2, (l + r) / 2, r);
+        return min(vl, vr);
+    }
+
+    // @brief [a, b)の最小値を求める
+    ll query(int a, int b) { return query(a, b, 0, 0, n); }
+
+    ll operator[](int a) { return query(a, a + 1); }
+};
+
 /* 素数判定 */
 constexpr bool is_prime(const ll n) {
     if (n <= 1) return false;
