@@ -6,4 +6,16 @@
 
 // using mint = static_modint<MOD>;
 
-int main() {}
+int main() {
+    ll N, K;
+    cin >> N >> K;
+    vl c(N + 1, 0);
+    for (int i = 2; i <= N; i++) {
+        if (c[i]) continue;
+        for (int j = i; j <= N; j += i) c[j]++;
+    }
+    ll ans = 0;
+    for (int i = 2; i <= N; i++)
+        if (c[i] >= K) ans++;
+    cout << ans << endl;
+}
