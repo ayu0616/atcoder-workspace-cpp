@@ -231,7 +231,7 @@ class Graph : vector<Vertex> {
     // @param start 始点
     // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
     vl dyjkstra(int start) {
-        vl dist(n, LLONG_MAX);
+        vl dist(n, LL_INF);
         dist[start] = 0;
         priority_queue<pll, vpll, greater<pll>> que;
         que.push({0, start});
@@ -247,14 +247,14 @@ class Graph : vector<Vertex> {
                 }
             }
         }
-        rep(i, n) if (dist[i] == LLONG_MAX) dist[i] = -1;
+        rep(i, n) if (dist[i] == LL_INF) dist[i] = -1;
         return dist;
     }
 
     // @brief ワーシャルフロイド法
     // @return 全点間の最短距離（到達不可能な点への距離は-1とする）
     vvl warshall_floyd() {
-        vvl dist(n, vl(n, LLONG_MAX));
+        vvl dist(n, vl(n, LL_INF));
         rep(i, n) dist[i][i] = 0;
         rep(i, n) {
             for (auto e : this->at(i).edges) {
@@ -264,13 +264,13 @@ class Graph : vector<Vertex> {
         rep(k, n) {
             rep(i, n) {
                 rep(j, n) {
-                    if (dist[i][k] != LLONG_MAX && dist[k][j] != LLONG_MAX) {
+                    if (dist[i][k] != LL_INF && dist[k][j] != LL_INF) {
                         chmin(dist[i][j], dist[i][k] + dist[k][j]);
                     }
                 }
             }
         }
-        rep(i, n) rep(j, n) if (dist[i][j] == LLONG_MAX) dist[i][j] = -1;
+        rep(i, n) rep(j, n) if (dist[i][j] == LL_INF) dist[i][j] = -1;
         return dist;
     }
 
@@ -278,19 +278,19 @@ class Graph : vector<Vertex> {
     // @param start 始点
     // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
     vl bellman_ford(int start) {
-        vl dist(n, LLONG_MAX);
+        vl dist(n, LL_INF);
         dist[start] = 0;
         rep(i, n) {
             rep(j, n) {
                 for (auto e : this->at(j).edges) {
-                    if (dist[j] != LLONG_MAX && dist[*e.to] > dist[j] + e.cost) {
+                    if (dist[j] != LL_INF && dist[*e.to] > dist[j] + e.cost) {
                         dist[*e.to] = dist[j] + e.cost;
                         if (i == n - 1) dist[*e.to] = LLONG_MIN;
                     }
                 }
             }
         }
-        rep(i, n) if (dist[i] == LLONG_MAX) dist[i] = -1;
+        rep(i, n) if (dist[i] == LL_INF) dist[i] = -1;
         return dist;
     }
 
