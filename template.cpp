@@ -6,4 +6,9 @@
 
 // using mint = static_modint<MOD>;
 
-int main() {}
+int main() {
+    cout << fixed << setprecision(18);
+    // int N;
+    // cin >> N;
+    // vi A(N);
+}
