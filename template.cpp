@@ -1,3 +1,7 @@
+#ifdef ONLINE_JUDGE
+#define NDEBUG
+#endif
+
 #include "../../lib.hpp"
 
 // constexpr int MOD = 998244353;
@@ -8,7 +12,6 @@
 
 int main() {
     cout << fixed << setprecision(18);
-    // int N;
-    // cin >> N;
-    // vi A(N);
+    int N;
+    cin >> N;
 }

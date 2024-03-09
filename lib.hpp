@@ -621,3 +621,19 @@ vector<vector<T>> combinations(vector<T> &v, int r) {
     }
     return res;
 }
+
+template <typename T = ll>
+struct Point {
+    T x, y;
+    Point(T x = 0, T y = 0) : x(x), y(y) {}
+    Point operator+(const Point &p) const { return Point(x + p.x, y + p.y); }
+    Point operator-(const Point &p) const { return Point(x - p.x, y - p.y); }
+    Point operator*(const T &d) const { return Point(x * d, y * d); }
+    Point operator/(const T &d) const { return Point(x / d, y / d); }
+    T dot(const Point &p) const { return x * p.x + y * p.y; }
+    T cross(const Point &p) const { return x * p.y - y * p.x; }
+    T norm() const { return x * x + y * y; }
+    double abs() const { return sqrt(norm()); }
+    bool operator<(const Point &p) const { return x != p.x ? x < p.x : y < p.y; }
+    bool operator==(const Point &p) const { return x == p.x && y == p.y; }
+};
