@@ -1,11 +1,11 @@
 #! /bin/zsh
 git diff --stat origin/main
 echo "コミットするコードに公開してはいけないコード（開催中のコンテスト）は含まれていません(y/N): "
-res=$(read -q)
-echo
-if $res; then
+if read -q; then
+    echo
     exit 0
 else
+    echo
     echo "コミットを中止しました"
     exit 1
 fi
