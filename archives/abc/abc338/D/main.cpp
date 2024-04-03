@@ -1,3 +1,9 @@
+#ifdef ONLINE_JUDGE
+#define NDEBUG
+#endif
+
+#include <atcoder/lazysegtree.hpp>
+
 #include "../../lib.hpp"
 
 // constexpr int MOD = 998244353;
@@ -6,38 +12,39 @@
 
 // using mint = static_modint<MOD>;
 
+using S = ll;
+S op(S a, S b) { return min(a, b); }
+S e() { return LL_INF; }
+using F = ll;
+S mapping(F f, S x) { return f + x; }
+F composition(F f, F g) { return f + g; }
+F id() { return 0; }
+
 int main() {
-    ll N, M;
+    cout << fixed << setprecision(18);
+    int N, M;
     cin >> N >> M;
     vi X(M);
     cin >> X;
-    rep(i, M) { X[i]--; }
-    Graph g(N);
-    rep(i, N) {
-        g.add_edge(i, (i + 1) % N);
-        g.add_edge((i + 1) % N, i);
-    }
-    SegTree seg(N);
-    seg.update(0, N, 0);
-    ll before = 0;
+    rep(i, M) X[i]--;
+    atcoder::lazy_segtree<S, op, e, F, mapping, composition, id> seg(N);
+    rep(i, N) seg.set(i, 0);
+    ll ans = 0;
     rep(i, M - 1) {
-        ll a = X[i], b = X[i + 1];
-        if (a > b) swap(a, b);
-        ll dl = N - b + a;
-        ll dr = b - a;
-        before += min(dl, dr);
-        if (dl < dr) {
-            ll diff = dr - dl;
-            ll cur = min(seg.query(0, a), seg.query(b, N));
-            seg.update(0, a, cur + diff);
-            seg.update(b, N, cur + diff);
-        } else if (dl > dr) {
-            ll diff = dl - dr;
-            ll cur = seg.query(a, b);
-            seg.update(a, b, cur + diff);
+        int x = X[i];
+        int y = X[i + 1];
+        if (x > y) swap(x, y);
+        int right_cost = y - x;
+        int left_cost = N - right_cost;
+        ans += min(right_cost, left_cost);
+        if (right_cost < left_cost) {
+            seg.apply(x, y, left_cost - right_cost);
+        } else if (right_cost > left_cost) {
+            seg.apply(0, x, right_cost - left_cost);
+            seg.apply(y, N, right_cost - left_cost);
         }
     }
-    ll ans = before + seg.query(0, N);
+    // rep(i, N) { cerr << i << " " << seg.get(i) << endl; }
+    ans += seg.all_prod();
     cout << ans << endl;
-    // rep(i, N) { cout<<seg.query(i, i+1)<<endl;}
 }
