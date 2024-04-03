@@ -52,6 +52,7 @@ def check_duplicate():
         if os.path.exists(path):
             shutil.move(path, f"./{contest}")
             print(f"Directory {contest} already exists.")
+            print(f"moved {contest} to current directory.")
             sys.exit(1)
 
 
