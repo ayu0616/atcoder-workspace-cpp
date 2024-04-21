@@ -83,11 +83,11 @@ def wait():
     print()
     now = datetime.datetime.now()
     start_time = datetime.datetime(now.year, now.month, now.day, now.hour + 1, 0, 0)
-    waiting_time = int((start_time - now).total_seconds())
+    waiting_time = (start_time - now).total_seconds()
     while waiting_time > 0:
         now = datetime.datetime.now()
-        waiting_time = int((start_time - now).total_seconds())
-        print(f"\rWaiting for {waiting_time} seconds...", end="")
+        waiting_time = (start_time - now).total_seconds()
+        print(f"\rWaiting for {int(waiting_time)} seconds...", end="")
         sleep(0.5)
     print()
 
