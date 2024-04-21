@@ -12,6 +12,6 @@
 
 int main() {
     cout << fixed << setprecision(18);
-    int N;
+    ll N;
     cin >> N;
 }
