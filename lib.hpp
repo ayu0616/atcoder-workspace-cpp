@@ -171,6 +171,9 @@ class UnionFind {
         }
         return res;
     }
+
+    // 頂点xが根かどうか
+    inline T is_root(T x) { return par[x] == -1; }
 };
 
 struct Edge;
