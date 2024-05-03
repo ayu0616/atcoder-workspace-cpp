@@ -6,27 +6,58 @@
 
 // using mint = static_modint<MOD>;
 
-int main()
-{
-    ll N, K, P;
-    cin >> N >> K >> P;
-    vl C(N);
-    vvl A(N, vl(K));
-    rep(i, N)
-    {
-        cin >> C[i];
-        rep(j, K) cin >> A[i][j];
+int N, K, P;
+struct Plan {
+    ll C;
+    vi A;
+};
+
+// P+1進数の各桁を取得
+vi getDigits(int n) {
+    int base = P + 1;
+    vi res(K, 0);
+    int i = 0;
+    while (n > 0) {
+        res[i] = n % base;
+        n /= base;
+        i++;
     }
-    vvl dp(N + 1, vl(powl(P + 1, K), 1e18));
-    dp[0][0] = 0;
-    rep(i, N)
-    {
-        rep(j, powl(P + 1, K))
-        {
-            ll next = j;
-            rep(k, K) next += powl(P + 1, k) * A[i][k];
-            chmin(dp[i + 1][next], dp[i][j] + C[i]);
+    return res;
+}
+
+int to_decimal(vi digits) {
+    int res = 0;
+    int base = P + 1;
+    rep(i, digits.size()) { res += digits[i] * pow(base, i); }
+    return res;
+}
+
+int main() {
+    cin >> N >> K >> P;
+    vector<Plan> plans(N);
+    rep(i, N) {
+        Plan plan;
+        cin >> plan.C;
+        plan.A.resize(K);
+        cin >> plan.A;
+        plans[i] = plan;
+    }
+
+    int state_num = pow(P + 1, K);
+    vvl dp(N + 1, vl(state_num, LL_INF));
+    rep(i, N + 1) { dp[i][0] = 0; }
+
+    rep(i, N) {
+        rep(j, state_num) {
+            dp[i + 1][j] = min(dp[i + 1][j], dp[i][j]);
+            vi p_list = getDigits(j);
+            rep(k, K) { p_list[k] = min(p_list[k] + plans[i].A[k], P); }
+            int nj = to_decimal(p_list);
+            chmin(dp[i + 1][nj], dp[i][j] + plans[i].C);
         }
     }
-    cout << (dp[N][powl(P + 1, K) - 1] == 1e18 ? -1 : dp[N][powl(P + 1, K) - 1]) << endl;
+    if (dp[N][state_num - 1] == LL_INF)
+        cout << -1 << endl;
+    else
+        cout << dp[N][state_num - 1] << endl;
 }
