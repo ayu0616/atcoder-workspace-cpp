@@ -1,3 +1,7 @@
+#ifdef ONLINE_JUDGE
+#define NDEBUG
+#endif
+
 #include "../../lib.hpp"
 
 // constexpr int MOD = 998244353;
@@ -7,61 +11,30 @@
 // using mint = static_modint<MOD>;
 
 int main() {
-    int N, K;
+    cout << fixed << setprecision(18);
+    ll N, K;
     cin >> N >> K;
-    vi A(K);
+    vl A(K);
     cin >> A;
-    // rep(i, N)A[i]--;
-    // vi L, R;
-    // rep(i, N) {
-    //     if(A.front()==i){
-    //         L.push_back(i);
-    //         A.erase(A.begin());
-    //     }else{
-    //         L.push_back(i);
-    //         R.push_back(i);
-    //     }
-    // }
-    // int ans = 0;
-    // while(R.size()){
-    //     int l = L.front();
-    //     int r = R.front();
-    //     L.erase(L.begin());
-    //     R.erase(R.begin());
-    //     ans += abs(l-r);
-    // }
-    // ans += L.size() / 2;
     if (K % 2 == 0) {
-        int ans = 0;
-        auto B = A;
-        while (B.size()) {
-            int l = B.front();
-            B.erase(B.begin());
-            int r = B.front();
-            B.erase(B.begin());
-            ans += abs(l - r);
-        }
+        ll ans = 0;
+        rep(i, K / 2) { ans += A[2 * i + 1] - A[2 * i]; }
         cout << ans << endl;
     } else {
-        vi L(K / 2), R(K / 2);
-        rep(i, K - 1) {
-            if (i % 2 == 0) {
-                L[i / 2] = (A[i + 1] - A[i]);
-            } else {
-                R[i / 2] = (A[i + 1] - A[i]);
-            }
-        }
-        vi L_sum(L.size() + 1), R_sum(R.size() + 1);
-        L_sum[0] = 0;
-        R_sum[0] = 0;
+        vl B1(K / 2), B2(K / 2);
         rep(i, K / 2) {
-            L_sum[i + 1] = L_sum[i] + L[i];
-            R_sum[i + 1] = R_sum[i] + R[i];
+            B1[i] = A[2 * i + 1] - A[2 * i];
+            B2[i] = A[2 * i + 2] - A[2 * i + 1];
         }
-        int ans = 1e9;
-        for (int i = 0;i<=K;i+=2) {
-            int an = L_sum[i / 2] + R_sum[K / 2] - R_sum[i / 2];
-            chmin(ans, an);
+        vl B1_sum(K / 2 + 1), B2_sum(K / 2 + 1);
+        rep(i, K / 2) {
+            B1_sum[i + 1] = B1_sum[i] + B1[i];
+            B2_sum[i + 1] = B2_sum[i] + B2[i];
+        }
+        ll ans = LL_INF;
+        rep(i, K / 2 + 1) {
+            ll tmp = B1_sum[i] + B2_sum[K / 2] - B2_sum[i];
+            chmin(ans, tmp);
         }
         cout << ans << endl;
     }
