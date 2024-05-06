@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "../../lib.hpp"
 
 // const int MOD = 998244353;
@@ -6,27 +8,27 @@
 
 // using mint = static_modint<MOD>;
 
-int main()
-{
-    int n;
-    cin >> n;
-    vi a(n);
-    rep(i, n) cin >> a[i];
-    vvl ans(n + 1);
-    vi tmp(n + 1, -1);
-    rep(i, n)
-    {
-        int ai = a[i];
-        if (tmp[ai] == -1)
-        {
-            tmp[ai] = i;
-        }
-        else
-        {
-            ans[ai].push_back(i - tmp[ai] - 1 - ans[ai].size());
+int main() {
+    ll N;
+    cin >> N;
+    vl A(N);
+    cin >> A;
+    rep(i, N) A[i]--;
+    vvl v(N);
+    rep(i, N) { v[A[i]].push_back(i); }
+    vvl v_diff(N);
+    rep(i, N) {
+        if (v[i].size() == 0) continue;
+        rep(j, v[i].size() - 1) { v_diff[i].push_back(v[i][j + 1] - v[i][j] - 1); }
+    }
+    rep(i, N) {
+        rep(j, v_diff[i].size()) { v_diff[i][j] *= (v_diff[i].size() - j) * (j + 1); }
+    }
+    ll ans = 0;
+    rep(i, N) {
+        for (auto x : v_diff[i]) {
+            ans += x;
         }
     }
-    ll out = 0;
-    rep(i, n+1) out += accumulate(all(ans[i]), 0);
-    cout << out << endl;
+    cout << ans << endl;
 }
