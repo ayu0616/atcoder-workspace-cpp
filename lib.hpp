@@ -502,6 +502,7 @@ class static_modint {
         if (t & 1) a *= *this;
         return a;
     }
+    inline static_modint pow(const static_modint &t) const { return pow(t.x); }
     // 逆元を求める
     inline static_modint inv() const { return pow(mod - 2); }
     inline static_modint &operator/=(const static_modint &a) { return (*this) *= a.inv(); }
@@ -514,6 +515,8 @@ class static_modint {
         os << m.x;
         return os;
     }
+
+    friend bool operator==(const static_modint &lhs, const static_modint &rhs) { return lhs.x == rhs.x; }
 };
 
 // 桁和
