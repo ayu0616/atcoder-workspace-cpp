@@ -21,14 +21,13 @@ int main() {
     cout << fixed << setprecision(18);
     ll N, P;
     cin >> N >> P;
-    mint p = 100 / P;
-    mint ans = 0;
-    ll two_cnt = N / 2;
-    while (two_cnt >= 0) {
-        ll one_cnt = N - two_cnt * 2;
-        ll n = one_cnt + two_cnt;
-        ans += fact(n) / (fact(two_cnt) * fact(one_cnt)) * p.pow(two_cnt) * ((mint)1 - p).pow(one_cnt) * n;
-        two_cnt--;
+    mint p = P;
+    p /= 100;
+    mint q = -p + 1;
+    vector<mint> dp(N + 1, 0);
+    dp[N] = 0;
+    for (ll i = N - 1; i >= 0; --i) {
+        dp[i] = (dp[i + 1] * q + dp[min(N, i + 2)] * p) + 1;
     }
-    cout << ans << endl;
+    cout << dp[0] << endl;
 }
