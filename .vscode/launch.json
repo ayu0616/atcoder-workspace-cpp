@@ -1,0 +1,37 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: submit",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "scripts/submit",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "${file}"
+            ]
+        },
+        {
+            "name": "Python: test",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "scripts/exec_test",
+            "console": "integratedTerminal",
+            "justMyCode": true,
+            "args": [
+                "${file}"
+            ]
+        },
+        {
+            "name": "C/C++: g++-12 アクティブ ファイルのビルドとデバッグ",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "cwd": "${fileDirname}",
+            "preLaunchTask": "C/C++: g++-12 アクティブなファイルのビルド",
+            "stdio": ["${fileDirname}/test-input.txt"]
+        }
+    ]
+}
