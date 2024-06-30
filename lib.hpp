@@ -513,6 +513,8 @@ class static_modint {
         return res /= a;
     }
 
+    inline int val() const { return x; }
+
     friend ostream &operator<<(ostream &os, const static_modint &m) {
         os << m.x;
         return os;
