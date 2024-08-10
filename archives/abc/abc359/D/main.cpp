@@ -10,47 +10,52 @@ constexpr int MOD = 998244353;
 
 using mint = static_modint<MOD>;
 
+map<string, bool> kaibun_memo;
+bool is_kaibun(const string &s) {
+    if (kaibun_memo.count(s)) {
+        return kaibun_memo[s];
+    }
+    for (int i = 0; i < s.size() / 2; i++) {
+        if (s[i] != s[s.size() - 1 - i]) {
+            return kaibun_memo[s] = false;
+        }
+    }
+    return kaibun_memo[s] = true;
+}
+
 int main() {
     cout << fixed << setprecision(18);
     ll N, K;
     string S;
     cin >> N >> K >> S;
-    mint rev = 0;
-    int q_cnt = 0;
-    rep(i, N) {
-        if (S[i] == '?') {
-            q_cnt++;
-        }
-    }
-    rep(i, N - K + 1) {
-        mint cnt = 1;
-        int local_q_cnt = 0;
-        rep(j, K) {
-            if (S[i + j] == '?') {
-                local_q_cnt++;
-            }
-        }
-        rep(j, (K + 1) / 2) {
-            int idx = i + j;
-            int pair_idx = i + K - 1 - j;
-            if (S[idx] == '?') {
-                if (S[pair_idx] == '?') {
-                    cnt *= 2;
-                } else {
+
+    map<string, mint> dp, prev;
+    dp[string(K - 1, 'C')] = 1;
+    for (char &c : S) {
+        prev = dp;
+        dp.clear();
+        for (auto &p : prev) {
+            string s = p.first;
+            if (c == '?') {
+                string t = s + 'A';
+                if (!is_kaibun(t)) {
+                    dp[t.substr(1)] += p.second;
+                }
+                t = s + 'B';
+                if (!is_kaibun(t)) {
+                    dp[t.substr(1)] += p.second;
                 }
             } else {
-                if (S[pair_idx] == '?') {
-                } else {
-                    if (S[pair_idx] != S[idx]) {
-                        cnt = 0;
-                        break;
-                    }
+                string t = s + c;
+                if (!is_kaibun(t)) {
+                    dp[t.substr(1)] += p.second;
                 }
             }
         }
-        rev += mint(2).pow(q_cnt - local_q_cnt) * cnt;
     }
-    mint ans = mint(2).pow(q_cnt) - rev;
-    debug(rev);
-    cout << ans << endl;
+    mint ans = 0;
+    for (auto &p : dp) {
+        ans += p.second;
+    }
+    cout << ans.val() << endl;
 }
