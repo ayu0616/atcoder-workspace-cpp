@@ -18,4 +18,8 @@ test
 
 tasks.pdf
 
-include/
+include/atcoder/
+
+
+include/hassaku/*
+!include/hassaku/*.hpp
