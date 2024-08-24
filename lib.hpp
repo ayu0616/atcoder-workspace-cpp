@@ -59,6 +59,7 @@ class greater_heap {
    public:
     greater_heap() : q() {}
 
+    bool empty() { return q.empty(); }
     bool not_empty() { return !q.empty(); }
 
     void print_all() {
