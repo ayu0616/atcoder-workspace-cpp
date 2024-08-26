@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cassert>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
 #endif
@@ -18,22 +19,15 @@ int main() {
     vl A(N);
     cin >> A;
     rep(i, N) { A[i] %= M; }
-    vl A_sum(N);
-    rep(i, N - 1) { A_sum[i + 1] = (A_sum[i] + A[i]) % M; }
-    vector<vector<ll>> cnt(M);
-    rep(i, 1, N) { cnt[A_sum[i]].push_back(i); }
+    vl A_sum(2 * N + 1);
+    rep(i, 2 * N) { A_sum[i + 1] = (A_sum[i] + A[i % N]) % M; }
+    vl cnt(M);
+    rep(i, N) { cnt[A_sum[i]]++; }
     ll ans = 0;
-    rep(i, M) {
-        ll m = A_sum[i];
-        ll diff = (M + m) % M;
-        if (cnt[diff].size() > 0) {
-            ans += cnt[diff].size() - (lower_bound(all(cnt[diff]), i) - cnt[diff].begin());
-        }
-        m = (m + A_sum.back()) % M;
-        diff = (M + m) % M;
-        if (cnt[diff].size() > 0) {
-            ans += lower_bound(all(cnt[diff]), i) - cnt[diff].begin();
-        }
+    rep(i, N) {
+        cnt[A_sum[i]]--;
+        ans += cnt[A_sum[i]];
+        cnt[A_sum[i + N]]++;
     }
     cout << ans << endl;
 }
