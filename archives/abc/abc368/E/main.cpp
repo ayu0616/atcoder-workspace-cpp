@@ -17,9 +17,19 @@ struct Train {
     ll A, B, S, T, id;
 };
 
+struct Event {
+    ll time, type, station, train;
+
+    bool operator<(const Event &rhs) const {
+        if (time == rhs.time) {
+            return type < rhs.type;
+        }
+        return time < rhs.time;
+    }
+};
+
 int main() {
     cout << fixed << setprecision(18);
-    time_t start = clock();
     ll N, M, X0;
     cin >> N >> M >> X0;
     vector<Train> trains(M);
@@ -32,27 +42,22 @@ int main() {
         trains[i] = train;
         stations[train.A].push_back(train);
     }
-    vl X(M, 0);
+    vl X(M, 0), last(N, 0);
     X[0] = X0;
-    deque<ll> que;
-    que.push_back(0);
-    while (!que.empty() && clock() - start < 1.9 * CLOCKS_PER_SEC) {
-        auto t = que.front();
-        que.pop_front();
-        Train train = trains[t];
-        for (Train next_train : stations[train.B]) {
-            int nt = next_train.id;
-            if (nt == 0) {
-                continue;
+    vector<Event> events;
+    rep(i, M) {
+        events.push_back({trains[i].S, 1, trains[i].A, i});
+        events.push_back({trains[i].T, 0, trains[i].B, i});
+    }
+    sort(all(events));
+    for (auto &&event : events) {
+        Train train = trains[event.train];
+        if (event.type == 1) {
+            if (last[event.station] > train.S + X[event.train]) {
+                X[event.train] += last[event.station] - train.S - X[event.train];
             }
-            if (train.T > next_train.S) {
-                continue;
-            }
-            if (train.T + X[t] <= next_train.S + X[nt]) {
-                continue;
-            }
-            X[nt] = train.T + X[t] - next_train.S;
-            que.push_back(nt);
+        } else {
+            chmax(last[train.B], train.T + X[event.train]);
         }
     }
     cout << vl(X.begin() + 1, X.end()) << endl;
