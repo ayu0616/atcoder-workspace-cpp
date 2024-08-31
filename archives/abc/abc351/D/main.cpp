@@ -12,110 +12,82 @@
 
 ll H, W;
 int to_idx(ll y, ll x) { return y * W + x; }
+pii to_pos(int idx) { return {idx / W, idx % W}; }
 
 int main() {
     cout << fixed << setprecision(18);
     cin >> H >> W;
     vs S(H);
     cin >> S;
-    Graph G(H * W);
-    UnionFind<ll> uf(H * W);
-    vvb ok_pos(H, vb(W, false));
-    rep(i, H) rep(j, W) {
-        if (S[i][j] == '#') continue;
-        bool ok = true;
-        rep(k, 4) {
-            ll ny = i + dy4[k];
-            ll nx = j + dx4[k];
+    UnionFind<int> uf(H * W);
+    vs S1 = S;
+    rep(y, H) rep(x, W) {
+        if (S[y][x] == '#') continue;
+        rep(i, 4) {
+            ll ny = y + dy4[i];
+            ll nx = x + dx4[i];
             if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
-            if (S[ny][nx] == '#') ok = false;
-        }
-        if (!ok) continue;
-        ok_pos[i][j] = true;
-        rep(k, 4) {
-            ll ny = i + dy4[k];
-            ll nx = j + dx4[k];
-            if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
-            if (S[ny][nx] == '#') continue;
-            G.add_edge(to_idx(i, j), to_idx(ny, nx));
-            bool ok = true;
-            rep(l, 4) {
-                ll ny = i + dy4[l];
-                ll nx = j + dx4[l];
-                if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
-                if (S[ny][nx] == '#') ok = false;
+            if (S[ny][nx] == '#') {
+                S1[y][x] = '#';
             }
-            if (ok) uf.unite(to_idx(i, j), to_idx(ny, nx));
         }
     }
-    ll ans = 0;
-    rep(i, H) rep(j, W) {
-        if (S[i][j] == '#') continue;
-        chmax(ans, 1LL);
-        if (ok_pos[i][j]) {
-            ll idx = to_idx(i, j);
-            if (uf.is_root(idx)) {
-                deque<ll> que;
-                que.push_back(idx);
-                vb visited(H * W, false);
-                visited[idx] = true;
-                ll score = 1;
-                while (que.size()) {
-                    ll cur = que.front();
-                    que.pop_front();
-                    for (auto e : G[cur]) {
-                        if (visited[*e.to]) continue;
-                        visited[*e.to] = true;
-                        que.push_back(*e.to);
-                        score++;
+    deque<pii> q;
+    vb visited(H * W);
+    rep(y, H) rep(x, W) {
+        if (S1[y][x] == '#') continue;
+        if (visited[to_idx(y, x)]) continue;
+        q.push_back({y, x});
+        while (!q.empty()) {
+            auto [cy, cx] = q.front();
+            q.pop_front();
+            if (visited[to_idx(cy, cx)]) continue;
+            visited[to_idx(cy, cx)] = true;
+            rep(i, 4) {
+                ll ny = cy + dy4[i];
+                ll nx = cx + dx4[i];
+                if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
+                if (S1[ny][nx] == '#') continue;
+                uf.unite(to_idx(cy, cx), to_idx(ny, nx));
+                q.push_back({ny, nx});
+            }
+        }
+    }
+    vi groups;
+    rep(y, H) rep(x, W) {
+        if (S1[y][x] == '#') continue;
+        if (uf.root(to_idx(y, x)) == to_idx(y, x)) {
+            groups.push_back(to_idx(y, x));
+        }
+    }
+    if (groups.empty()) {
+        cout << 1 << endl;
+        return 0;
+    }
+    vi group_scores;
+    for (int group : groups) {
+        group_scores.push_back(uf.size(group));
+    }
+    map<int, int> gp_map;
+    rep(i, group_scores.size()) { gp_map[groups[i]] = i; }
+    rep(y, H) rep(x, W) {
+        if (S[y][x] == '.' && S1[y][x] == '#') {
+            vb added(groups.size());
+            rep(i, 4) {
+                ll ny = y + dy4[i];
+                ll nx = x + dx4[i];
+                if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
+                if (S1[ny][nx] == '.') {
+                    int idx2 = to_idx(ny, nx);
+                    int group = uf.root(idx2);
+                    if (!added[gp_map[group]]) {
+                        group_scores[gp_map[group]]++;
+                        added[gp_map[group]] = true;
                     }
                 }
-                chmax(ans, score);
             }
         }
     }
-    // rep(i, H) rep(j, W) {
-    //     if (S[i][j] == '.') ans = 1;
-    // }
-    // vvb visited(H, vb(W, false));
-    // vvb visited_local(H, vb(W, false));
-    // function<ll(ll, ll)> dfs = [&](ll y, ll x) {
-    //     if (y < 0 || y >= H || x < 0 || x >= W) return 0LL;
-    //     if (visited_local[y][x]) return 0LL;
-    //     visited[y][x] = true;
-    //     visited_local[y][x] = true;
-    //     if (S[y][x] == '#') return 0LL;
-    //     bool ok = true;
-    //     rep(i, 4) {
-    //         ll ny = y + dy4[i];
-    //         ll nx = x + dx4[i];
-    //         if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
-    //         if (S[ny][nx] == '#') ok = false;
-    //     }
-    //     ll score = 1;
-    //     if (!ok) {
-    //         return score;
-    //     }
-    //     score += dfs(y + 1, x);
-    //     score += dfs(y, x + 1);
-    //     score += dfs(y - 1, x);
-    //     score += dfs(y, x - 1);
-    //     ans = max(ans, score);
-    //     return score;
-    // };
-    // rep(i, H) rep(j, W) {
-    //     bool ok = true;
-    //     rep(i, 4) {
-    //         ll ny = i + dy4[i];
-    //         ll nx = j + dx4[i];
-    //         if (ny < 0 || ny >= H || nx < 0 || nx >= W) continue;
-    //         if (S[ny][nx] == '#') ok = false;
-    //     }
-    //     if (visited[i][j]) ok = false;
-    //     if (ok) {
-    //         visited_local.assign(H, vb(W, false));
-    //         dfs(i, j);
-    //     }
-    // }
+    int ans = *max_element(all(group_scores));
     cout << ans << endl;
 }
