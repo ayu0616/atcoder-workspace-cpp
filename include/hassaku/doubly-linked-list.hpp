@@ -99,6 +99,13 @@ class DoublyLinkedList {
         os << std::endl;
     }
 
+    inline LinkedListNode *find(int key) {
+        if (keyToNode.find(key) == keyToNode.end()) {
+            return nullptr;
+        }
+        return keyToNode[key];
+    }
+
     inline LinkedListNode *operator[](int key) {
         if (keyToNode.find(key) == keyToNode.end()) {
             throw std::runtime_error("key not found");
