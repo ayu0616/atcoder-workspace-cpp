@@ -12,6 +12,7 @@
                 "-gdwarf-3",
                 "-std=c++20",
                 "-I${workspaceFolder}/include",
+                "-I/usr/local/include",
                 "-o",
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "-DHASSAKU_DEBUG",
