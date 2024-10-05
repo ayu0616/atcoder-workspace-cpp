@@ -73,7 +73,7 @@ class greater_heap {
 
     void pop() { return q.pop(); }
 
-    T top() { return q.top(); }
+    T top() const { return q.top(); }
 };
 
 // @brief 大きい方で更新
