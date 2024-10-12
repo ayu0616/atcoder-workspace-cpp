@@ -12,25 +12,17 @@
 
 // using mint = static_modint<MOD>;
 
-ll min_c(ll w, ll a, ll p, ll b, ll q) {
-    ll low = 0;
-    ll high = (w + b - 1) / b;
-    while (high - low > 3) {
-        ll m1 = low + (high - low) / 3;
-        ll m2 = high - (high - low) / 3;
-        ll c1 = m1 * q + ((max(w - m1 * b, 0LL) + a - 1) / a) * p;
-        ll c2 = m2 * q + ((max(w - m2 * b, 0LL) + a - 1) / a) * p;
-        if (c1 < c2) {
-            high = m2;
-        } else {
-            low = m1;
-        }
-    }
+ll div_ceil(ll a, ll b) { return (a + b - 1) / b; }
+
+ll min_c(ll W, ll A, ll P, ll B, ll Q) {
     ll mc = LL_INF;
-    for (ll bb = low; bb <= high; bb++) {
-        ll req = max(0LL, (w - bb * b));
-        ll aa = (req + a - 1) / a;
-        mc = min(mc, bb * q + aa * p);
+    rep(a, A + 1) {
+        ll b = max(0LL, div_ceil(W - a * A, B));
+        mc = min(mc, a * P + b * Q);
+    }
+    rep(b, B + 1) {
+        ll a = max(0LL, div_ceil(W - b * A, B));
+        mc = min(mc, a * P + b * Q);
     }
     return mc;
 }
