@@ -10,6 +10,16 @@
 
 // using mint = static_modint<MOD>;
 
+ll mod_pow(ll x, ll n, ll mod) {
+    ll res = 1;
+    while (n > 0) {
+        if (n & 1) res = res * x % mod;
+        x = x * x % mod;
+        n >>= 1;
+    }
+    return res;
+}
+
 int main() {
     cout << fixed << setprecision(18);
     ll N, K;
@@ -18,27 +28,18 @@ int main() {
     cin >> P;
     rep(i, N) P[i]--;
 
-    vvl dp(62, vl(10010));
-    rep(i, N) dp[0][i] = P[P[i]];
-    rep(i, 61) {
-        rep(j, N) { dp[i + 1][j] = dp[i][dp[i][j]]; }
-    }
-
-    vl ans(N);
+    vi used(N, 0), ans(N, 0);
     rep(i, N) {
-        ll now = P[i];
-        ll k = K;
-        int j = 0;
-        while (k > 0) {
-            if (k & 1) {
-                now = dp[j][now];
-            }
-            j++;
-            k >>= 1;
+        if (used[i]) continue;
+        vi cycle;
+        int cur = i;
+        while (used[cur] == 0) {
+            cycle.push_back(cur);
+            used[cur] = 1;
+            cur = P[cur];
         }
-        ans[now] = i;
+        int cycle_size = cycle.size();
+        rep(j, cycle_size) { ans[cycle[j]] = cycle[(j + mod_pow(2, K, cycle_size)) % cycle_size] + 1; }
     }
-
-    rep(i, N) ans[i]++;
     cout << ans << endl;
 }
