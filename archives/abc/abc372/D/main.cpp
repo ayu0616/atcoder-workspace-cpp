@@ -1,14 +1,9 @@
+#include <algorithm>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
 #endif
 
 #include "../../lib.hpp"
-
-// constexpr int MOD = 998244353;
-// constexpr int MOD = 1000000007;
-// constexpr int MOD = 1000000009;
-
-// using mint = static_modint<MOD>;
 
 int main() {
     cout << fixed << setprecision(18);
@@ -16,15 +11,15 @@ int main() {
     cin >> N;
     vi H(N);
     cin >> H;
-    reverse(all(H));
-    multiset<int> seen;
-    vi a;
-    for (int h : H) {
-        auto it = seen.upper_bound(h);
-        int ans = distance(it, seen.end());
-        a.push_back(ans);
-        seen.insert(h);
+    vi ans(N);
+    set<int> cur;
+    for (int i = N - 1; i >= 0; i--) {
+        ans[i] = cur.size();
+        ll h = H[i];
+        cur.insert(h);
+        while (cur.size() && *cur.begin() < h) {
+            cur.erase(cur.begin());
+        }
     }
-    reverse(all(a));
-    cout << a << endl;
+    cout << ans << endl;
 }
