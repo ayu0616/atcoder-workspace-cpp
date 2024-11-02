@@ -1,4 +1,3 @@
-#include <functional>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
 #endif
@@ -11,50 +10,48 @@
 
 // using mint = static_modint<MOD>;
 
-ll N;
-vl A, B;
-
-map<tuple<ll, vl, int>, int> memo;
-int f(ll i, vector<ll> pow, int n) {
-    if (memo.count({i, pow, n})) {
-        return memo[{i, pow, n}];
-    }
-    if (i == N) {
-        if (pow[0] == pow[1] && pow[1] == pow[2]) {
-            return memo[{i, pow, n}] = n;
-        } else {
-            return memo[{i, pow, n}] = INT_INF;
-        }
-    }
-    ll a = A[i], b = B[i];
-    a--;
-    int res = INT_INF;
-    rep(t, 3) {
-        if (t == a) {
-            chmin(res, f(i + 1, pow, n));
-            continue;
-        }
-        auto pow2 = pow;
-        pow2[t] += b;
-        pow2[a] -= b;
-        chmin(res, f(i + 1, pow2, n + 1));
-    }
-    return memo[{i, pow, n}] = res;
-};
-
 int main() {
     cout << fixed << setprecision(18);
+    ll N;
     cin >> N;
-    A.resize(N), B.resize(N);
-    rep(i, N) { cin >> A[i] >> B[i]; }
+    vi A(N), B(N);
+    rep(i, N) cin >> A[i] >> B[i];
 
-    vl pow(3, 0);
-    rep(i, N) { pow[A[i] - 1] += B[i]; }
+    const int bsum = accumulate(all(B), 0);
 
-    int ans = f(0, pow, 0);
-    if (ans == INT_INF) {
+    if (bsum % 3 != 0) {
         cout << -1 << endl;
-    } else {
-        cout << ans << endl;
+        return 0;
     }
+
+    const int bmax = bsum / 3;
+
+    vector dp(bmax + 1, vector(bmax + 1, INT_INF));
+    dp[0][0] = 0;
+
+    rep(i, N) {
+        const int a = A[i], b = B[i];
+        vector next(bmax + 1, vector(bmax + 1, INT_INF));
+        rep(j, bmax + 1) {
+            rep(k, bmax + 1) {
+                if (dp[j][k] == INT_INF) continue;
+                if (j + b <= bmax) {
+                    chmin(next[j + b][k], dp[j][k] + (a != 1));
+                }
+                if (k + b <= bmax) {
+                    chmin(next[j][k + b], dp[j][k] + (a != 2));
+                }
+                chmin(next[j][k], dp[j][k] + (a != 3));
+            }
+        }
+        swap(dp, next);
+    }
+
+    int ans = dp[bmax][bmax];
+
+    if (ans == INT_INF) {
+        ans = -1;
+    }
+
+    cout << ans << endl;
 }
