@@ -1,3 +1,4 @@
+#include <vector>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
 #endif
@@ -22,8 +23,30 @@ int main() {
         g.add_edge(a, b);
         g.add_edge(b, a);
     }
-    map<int, ll> mp;
-    rep(i, N) { mp[g[i].size()]++; }
-    ll ans = mp[3] * ((mp[2] * (mp[2] - 1)) / 2);
+    ll ans = 0;
+    UnionFind<int> uf(N);
+    rep(i, N) {
+        if (g[i].size() != 3) continue;
+        for (auto& e : g[i]) {
+            int v = e.to->id;
+            if (g[v].size() != 3) continue;
+            uf.unite(i, v);
+        }
+    }
+    vector<set<int>> cnt(N);
+    rep(i, N) {
+        if (g[i].size() != 3) continue;
+        int root = uf.root(i);
+        for (auto& e : g[i]) {
+            int v = e.to->id;
+            if (g[v].size() == 2) {
+                cnt[root].insert(v);
+            }
+        }
+    }
+    rep(i, N) {
+        const ll siz = cnt[i].size();
+        ans += siz * (siz - 1) / 2;
+    }
     cout << ans << endl;
 }
