@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <numeric>
 #include <queue>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
@@ -17,27 +18,26 @@ void solve() {
     cin >> N >> K;
     vl A(N), B(N);
     cin >> A >> B;
-    vpll v(N);
-    rep(i, N) { v[i] = {B[i], i}; }
-    sort(all(v));
-    ll b_sum = 0;
-    ll a_max = 0;
-    ll b_max = 0;
-    rep(i, K) {
-        b_sum += v[i].first;
-        chmax(a_max, A[v[i].second]);
-        chmax(b_max, B[v[i].second]);
-    }
-    ll ans = b_sum * a_max;
+    vpll AB(N);
+    rep(i, N) { AB[i] = {A[i], B[i]}; }
+    sort(all(AB));
+    ll ans = LL_INF;
+
+    priority_queue<ll> pq;
+    rep(i, K) { pq.push(AB[i].second); }
+    ll sumB = accumulate(AB.begin(), AB.begin() + K, 0LL, [](ll acc, pll ab) { return acc + ab.second; });
+    chmin(ans, AB[K - 1].first * sumB);
+
     rep(i, K, N) {
-        b_sum += v[i].first - b_max;
-        if (chmin(ans, max(a_max, A[v[i].second]) * b_sum)) {
-            chmax(a_max, A[v[i].second]);
-            b_max = v[i].first;
-        } else {
-            b_sum -= v[i].first - b_max;
-        }
+        auto [a, b] = AB[i];
+        pq.push(b);
+        int maxB = pq.top();
+        pq.pop();
+        sumB += b;
+        sumB -= maxB;
+        chmin(ans, a * sumB);
     }
+
     cout << ans << endl;
 }
 
