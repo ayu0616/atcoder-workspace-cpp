@@ -1,3 +1,4 @@
+#include <vector>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
 #endif
@@ -12,130 +13,91 @@
 
 int main() {
     cout << fixed << setprecision(18);
-    ll N, M, SX, SY;
-    cin >> N >> M >> SX >> SY;
-    SX--, SY--;
-    vl X(N), Y(N);
-    rep(i, N) {
-        cin >> X[i] >> Y[i];
-        X[i]--, Y[i]--;
-    }
+    ll N, M, Sx, Sy;
+    cin >> N >> M >> Sx >> Sy;
+    vl X(N), Y(N), C(M);
     vector<char> D(M);
-    vl C(M);
-    rep(i, M) { cin >> D[i] >> C[i]; }
-    map<ll, set<ll>> houses_by_X, houses_by_Y;
+    rep(i, N) cin >> X[i] >> Y[i];
+    rep(i, M) cin >> D[i] >> C[i];
+    map<ll, set<ll>> xy, yx;
     rep(i, N) {
-        houses_by_X[X[i]].insert(Y[i]);
-        houses_by_Y[Y[i]].insert(X[i]);
+        xy[X[i]].insert(Y[i]);
+        yx[Y[i]].insert(X[i]);
     }
     ll ans = 0;
-    ll x = SX, y = SY;
+    ll x = Sx, y = Sy;
     rep(i, M) {
         char d = D[i];
         ll c = C[i];
         if (d == 'U') {
-            set<ll> se = houses_by_X[x];
-            ll ny = y + c;
-            if (se.empty()) {
-                y = ny;
+            auto lit = xy[x].lower_bound(y);
+            if (lit == xy[x].end()) {
+                y += c;
                 continue;
             }
-            auto it = se.lower_bound(y);
-            if (it == se.end()) {
-                y = ny;
-                continue;
+            auto rit = xy[x].upper_bound(y + c);
+            vector<ll> yv;
+            for (auto it = lit; it != rit; it++) {
+                yv.push_back(*it);
             }
-            while (it != se.end() && *it < ny) {
-                if (y <= *it && *it <= ny) {
-                    ans++;
-                    se.erase(it);
-                }
-                it++;
+            for (auto y : yv) {
+                ans++;
+                xy[x].erase(y);
+                yx[y].erase(x);
             }
-            y = ny;
+            y += c;
         } else if (d == 'D') {
-            set<ll> se = houses_by_X[x];
-            ll ny = y - c;
-            if (se.empty()) {
-                y = ny;
+            auto lit = xy[x].lower_bound(y - c);
+            if (lit == xy[x].end()) {
+                y -= c;
                 continue;
             }
-            auto it = se.upper_bound(y);
-            if (it == se.begin()) {
-                if (ny <= *it && *it <= y) {
-                    ans++;
-                }
-                y = ny;
-                continue;
+            auto rit = xy[x].upper_bound(y);
+            vector<ll> yv;
+            for (auto it = lit; it != rit; it++) {
+                yv.push_back(*it);
             }
-            if(it == se.end()) {
-                y = ny;
-                continue;
-            }
-            while (it != se.begin() && *it > ny) {
-                if (ny <= *it && *it <= y) {
-                    ans++;
-                    se.erase(it);
-                }
-                it--;
-            }
-            if (ny <= *it && *it <= y) {
+            for (auto y : yv) {
                 ans++;
-                se.erase(it);
+                xy[x].erase(y);
+                yx[y].erase(x);
             }
-            y = ny;
-        } else if (d == 'L') {
-            set<ll> se = houses_by_Y[y];
-            ll nx = x - c;
-            if (se.empty()) {
-                x = nx;
-                continue;
-            }
-            auto it = se.lower_bound(x);
-            if (it == se.begin()) {
-                if (nx <= *it && *it <= x) {
-                    ans++;
-                }
-                x = nx;
-                continue;
-            }
-            if(it == se.end()) {
-                x = nx;
-                continue;
-            }
-            while (it != se.begin() && *it > nx) {
-                if (nx <= *it && *it <= x) {
-                    ans++;
-                    se.erase(it);
-                }
-                it--;
-            }
-            if (nx <= *it && *it <= x) {
-                ans++;
-                se.erase(it);
-            }
-            x = nx;
+            y -= c;
         } else if (d == 'R') {
-            set<ll> se = houses_by_Y[y];
-            ll nx = x + c;
-            if (se.empty()) {
-                x = nx;
+            auto lit = yx[y].lower_bound(x);
+            if (lit == yx[y].end()) {
+                x += c;
                 continue;
             }
-            auto it = se.lower_bound(x);
-            if (it == se.end()) {
-                x = nx;
+            auto rit = yx[y].upper_bound(x + c);
+            vector<ll> xv;
+            for (auto it = lit; it != rit; it++) {
+                xv.push_back(*it);
+            }
+            for (auto x : xv) {
+                ans++;
+                xy[x].erase(y);
+                yx[y].erase(x);
+            }
+            x += c;
+        } else if (d == 'L') {
+            auto lit = yx[y].lower_bound(x - c);
+            if (lit == yx[y].end()) {
+                x -= c;
                 continue;
             }
-            while (it != se.end() && *it < nx) {
-                if (x <= *it && *it <= nx) {
-                    ans++;
-                    se.erase(it);
-                }
-                it++;
+            auto rit = yx[y].upper_bound(x);
+            vector<ll> xv;
+            for (auto it = lit; it != rit; it++) {
+                xv.push_back(*it);
             }
-            x = nx;
+            for (auto x : xv) {
+                ans++;
+                xy[x].erase(y);
+                yx[y].erase(x);
+            }
+            x -= c;
         }
     }
-    cout << x + 1 << " " << y + 1 << " " << ans << endl;
+    cout << vector({x, y, ans}) << endl;
 }
