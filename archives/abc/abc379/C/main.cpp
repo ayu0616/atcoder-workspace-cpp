@@ -1,3 +1,5 @@
+#include <numeric>
+#include <ostream>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
 #endif
@@ -16,26 +18,33 @@ int main() {
     cin >> N >> M;
     vl X(M), A(M);
     cin >> X >> A;
-    rep(i, M) X[i]--;
-    if (X[0].first != 0) {
+    // rep(i, M) X[i]--;
+
+    vpll xa(M);
+    rep(i, M) xa[i] = {X[i], A[i]};
+    sort(all(xa));
+    rep(i, M) {
+        auto [x, a] = xa[i];
+        X[i] = x;
+        A[i] = a;
+    }
+
+    ll sum = 0;
+    rep(i, M) {
+        if (sum < X[i] - 1) {
+            cout << -1 << endl;
+            return 0;
+        }
+        sum += A[i];
+    }
+
+    if (sum != N) {
         cout << -1 << endl;
         return 0;
     }
-    vpll XA(M);
-    rep(i, M) XA[i] = {X[i], A[i]};
-    sort(all(XA));
-    ll ans = 0;
-    ll filled = 0;
-    vpll cur;
-    cur.emplace_back(XA[0]);
-    rep(i, 1, N) {
-        auto [x, a] = XA[i];
-        int M = cur.size();
-        rep(i, M) {
-            int idx = M - 1 - i;
-            auto [cx, ca] = cur[idx];
-            filled = min(x, cx + ca - 1);
-        }
-        cur.emplace_back(XA[i]);
-    }
+
+    ll xa_sum = 0;
+    rep(i, M) { xa_sum += (X[i]) * A[i]; }
+    ll ans = N * (N + 1) / 2 - xa_sum;
+    cout << ans << endl;
 }
