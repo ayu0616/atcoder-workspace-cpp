@@ -26,7 +26,9 @@ using vvpll = vector<vpll>;
 #define rep(...) ov3(__VA_ARGS__, rep2, rep1, rep0)(__VA_ARGS__)
 #define foreach(v, c) for (auto &v : c)
 #define all(x) (x).begin(), (x).end()
+#define ALL(x) (x).begin(), (x).end()
 #define rall(x) (x).rbegin(), (x).rend()
+#define RALL(x) (x).rbegin(), (x).rend()
 #define debug(x) cerr << #x << ": " << x << '\n'
 
 // 移動

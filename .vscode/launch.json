@@ -24,14 +24,25 @@
             ]
         },
         {
-            "name": "C/C++: g++-12 アクティブ ファイルのビルドとデバッグ",
+            "name": "C/C++: g++-12",
             "type": "lldb",
             "request": "launch",
             "program": "${fileDirname}/${fileBasenameNoExtension}",
             "args": [],
             "cwd": "${fileDirname}",
             "preLaunchTask": "C/C++: g++-12 アクティブなファイルのビルド",
-            "stdio": ["${fileDirname}/test-input.txt"]
+            "stdio": [
+                "${fileDirname}/test-input.txt"
+            ]
+        },
+        {
+            "name": "C/C++: g++-12 標準入力を手動で",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${fileDirname}/${fileBasenameNoExtension}",
+            "args": [],
+            "cwd": "${fileDirname}",
+            "preLaunchTask": "C/C++: g++-12 アクティブなファイルのビルド",
         }
     ]
 }
