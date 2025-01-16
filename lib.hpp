@@ -223,7 +223,13 @@ class Graph : vector<Vertex> {
     int n;
 
    public:
+    Graph() : vector<Vertex>() { this->n = 0; }
     Graph(int n) {
+        this->n = n;
+        rep(i, n) this->push_back(Vertex(i));
+    }
+
+    inline void resize(int n) {
         this->n = n;
         rep(i, n) this->push_back(Vertex(i));
     }
@@ -238,7 +244,7 @@ class Graph : vector<Vertex> {
     // @brief ダイクストラ法
     // @param start 始点
     // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
-    vl dyjkstra(int start) {
+    vl dyjkstra(int start) const {
         vl dist(n, LL_INF);
         dist[start] = 0;
         priority_queue<pll, vpll, greater<pll>> que;
@@ -261,7 +267,7 @@ class Graph : vector<Vertex> {
 
     // @brief ワーシャルフロイド法
     // @return 全点間の最短距離（到達不可能な点への距離は-1とする）
-    vvl warshall_floyd() {
+    vvl warshall_floyd() const {
         vvl dist(n, vl(n, LL_INF));
         rep(i, n) dist[i][i] = 0;
         rep(i, n) {
@@ -285,7 +291,7 @@ class Graph : vector<Vertex> {
     // @brief ベルマンフォード法
     // @param start 始点
     // @return 始点からの最短距離（到達不可能な点への距離は-1とする）
-    vl bellman_ford(int start) {
+    vl bellman_ford(int start) const {
         vl dist(n, LL_INF);
         dist[start] = 0;
         rep(i, n) {
@@ -304,7 +310,7 @@ class Graph : vector<Vertex> {
 
     // @brief トポロジカルソート
     // @return トポロジカルソートされた頂点のリスト
-    vi topological_sort() {
+    vi topological_sort() const {
         vi res;
         vb used(n, false);
         function<void(int)> dfs = [&](int v) {
@@ -323,7 +329,7 @@ class Graph : vector<Vertex> {
 
     // @brief 強連結成分分解
     // @param rev このグラフと逆向きの辺を持つグラフ
-    UnionFind<int> scc(Graph rev) {
+    UnionFind<int> scc(Graph rev) const {
         vi num;
         vb visited(n, false);
 
@@ -358,7 +364,7 @@ class Graph : vector<Vertex> {
         return uf;
     }
 
-    vector<Edge> operator[](int id) { return this->at(id).edges; }
+    vector<Edge> operator[](int id) const { return this->at(id).edges; }
 };
 
 struct SegTree {
