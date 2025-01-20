@@ -1,4 +1,3 @@
-#include <ctime>
 #ifdef ONLINE_JUDGE
 #define NDEBUG
 #endif
@@ -11,52 +10,34 @@
 
 // using mint = static_modint<MOD>;
 
-ll N, K;
-ll sum = 0;
-ll ans = 0;
-vl A;
-stack<int> combi;
-int max_log = 0;
-
-inline void solve() {
-    if (combi.size() == K) {
-        chmax(ans, sum);
-    } else {
-        for (int i = combi.top() + 1; i < N; ++i) {
-            int siz = combi.size();
-            if (N - i + siz < K) {
-                break;
-            }
-            if (A[i] >> (max_log - 1)&1) {
-                break;
-            }
-            combi.push(i);
-            sum ^= A[i];
-            solve();
-            combi.pop();
-            sum ^= A[i];
-        }
-    }
-}
-
 int main() {
     cout << fixed << setprecision(18);
+    int N, K;
     cin >> N >> K;
-    A.resize(N);
+    vl A(N);
     cin >> A;
-    sort(all(A));
-    reverse(all(A));
-    while ((1LL << max_log) <= A[0]) {
-        ++max_log;
-    }
-    rep(i, N) {
-        combi.push(i);
-        sum = A[i];
-        solve();
-        combi.pop();
-        if(A[i] < (1LL << (max_log-1))) {
-            break;
+
+    ll ans = 0;
+    ll cnt = 0;
+
+    auto solve = [&](auto&& f, ll val, int left, int rest) -> void {
+        cnt++;
+        if (rest == 0) {
+            chmax(ans, val);
+            return;
         }
+        for (int i = left; i < N - rest + 1; ++i) {
+            f(f, val ^ A[i], i + 1, rest - 1);
+        }
+    };
+
+    if (K <= N - K) {
+        solve(solve, 0, 0, K);
+    } else {
+        ll all_xor = 0;
+        rep(i, N) all_xor ^= A[i];
+        solve(solve, all_xor, 0, N - K);
     }
+    // debug(cnt);
     cout << ans << endl;
 }
