@@ -15,44 +15,37 @@ int main() {
     ll N, Q;
     string S;
     cin >> N >> Q >> S;
-    vi cnt1(N + 1), cnt2(N + 1);
-    rep(i, N) {
-        cnt1[i + 1] = cnt1[i] + (S[i] == '1');
-        cnt2[i + 1] = cnt2[i] + (S[i] == '2');
-    }
     vi slash_idx;
     rep(i, N) {
-        if (S[i] == '/') {
-            slash_idx.push_back(i);
-        }
+        if (S[i] == '/') slash_idx.push_back(i + 1);
+    }
+    vi one_cnt(N + 1), two_cnt(N + 1);
+    rep(i, N) {
+        one_cnt[i + 1] = one_cnt[i] + (S[i] == '1');
+        two_cnt[i + 1] = two_cnt[i] + (S[i] == '2');
     }
     while (Q--) {
         ll L, R;
         cin >> L >> R;
-        L--;
-        const int SL = lower_bound(all(slash_idx), L) - slash_idx.begin();
-        const int SR = lower_bound(all(slash_idx), R) - slash_idx.begin();
-        if(SL == SR) {
+        int l = lower_bound(all(slash_idx), L) - slash_idx.begin();
+        int r = lower_bound(all(slash_idx), R + 1) - slash_idx.begin();
+        if (l == r) {
             cout << 0 << endl;
             continue;
         }
-        const auto f = [&](int x) { return min(cnt1[slash_idx[x]] - cnt1[L], (cnt2[R] - cnt2[slash_idx[x]])) * 2 + 1; };
-        // int sl = SL, sr = SR;
-        // while (sr - sl > 100) {
-        //     int m = (sl + sr) / 2;
-        //     if (f(m) >= f(m - 1)) {
-        //         sl = m;
-        //     } else {
-        //         sr = m;
-        //     }
-        // }
-        int ans = f(SL);
-        chmax(ans, f(SR - 1));
-        int n = SR - SL;
-        for (int i = 0; i < 1000; i++) {
-            int j = SL + rand() % n;
-            chmax(ans, f(j));
+        int res = 0;
+        while (r - l > 1) {
+            int mid = (l + r) / 2;
+            int i = slash_idx[mid];
+            int one = one_cnt[i] - one_cnt[L - 1];
+            int two = two_cnt[R] - two_cnt[i];
+            res = max(res, min(one, two) * 2 + 1);
+            if (one > two) {
+                r = mid;
+            } else {
+                l = mid;
+            }
         }
-        cout << ans << endl;
+        cout << res << endl;
     }
 }
