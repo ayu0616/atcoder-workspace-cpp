@@ -17,6 +17,8 @@ contest = sys.argv[1]
 
 is_wait = input("Wait for the contest to start? (y/N) ").strip()
 
+editor_command = "cursor"
+
 
 def main():
     check_duplicate()
@@ -59,18 +61,24 @@ def check_duplicate():
 def open_browser():
     """ブラウザでコンテストのページを開く"""
     sleep(2)
-    subprocess.run(f"open https://atcoder.jp/contests/{contest}/tasks/{contest}_a", shell=True)
+    subprocess.run(
+        f"open https://atcoder.jp/contests/{contest}/tasks/{contest}_a", shell=True
+    )
 
 
 def gen():
     """コンテストのディレクトリを作成し、atcoder-toolsでコードを生成する"""
-    subprocess.run(f"atcoder-tools gen {contest} --config=.atcodertools.toml", shell=True)
+    subprocess.run(
+        f"atcoder-tools gen {contest} --config=.atcodertools.toml", shell=True
+    )
     search_fname = os.path.join(contest, "**/*.cpp")
     cpp_files = glob(search_fname)
     cpp_files.sort()
-    subprocess.run(f"code-insiders {' '.join(cpp_files)}", shell=True)
+    subprocess.run(f"{editor_command} {' '.join(cpp_files)}", shell=True)
     subprocess.run(f"chmod 777 {' '.join(cpp_files)}", shell=True)
-    subprocess.run(f"create_test_input {contest}", shell=True)  # デバッグ用の入力ファイルを作成
+    subprocess.run(
+        f"create_test_input {contest}", shell=True
+    )  # デバッグ用の入力ファイルを作成
 
 
 def wait():
@@ -101,7 +109,10 @@ def download_pdf():
     session = requests.Session()
     soup = BeautifulSoup(session.get("https://atcoder.jp/login").text, "html.parser")
     token = soup.find_all("form")[1].find("input", type="hidden").get("value")
-    session.post("https://atcoder.jp/login", data={"username": username, "password": password, "csrf_token": token})
+    session.post(
+        "https://atcoder.jp/login",
+        data={"username": username, "password": password, "csrf_token": token},
+    )
     res = session.get(f"https://img.atcoder.jp/{contest}/tasks.pdf")
     with open(f"{contest}/tasks.pdf", "wb") as f:
         f.write(res.content)
