@@ -6,24 +6,24 @@
 
 // using mint = static_modint<MOD>;
 
+#include "hassaku/gcd.hpp"
+
+using namespace hassaku;
+
 int main() {
     cout << fixed << setprecision(18);
     ll X, Y;
     cin >> X >> Y;
-    if (X == 0) swap(X, Y);
-    ll A, B;
-    ll Y_mod = Y%X;
-    for (A = 0; A < X; A++) {
-        if ((-A * Y_mod + 2) % X == 0) {
-            B = (-A * Y + 2) / X;
-            break;
-        }
-        if ((-A * Y_mod - 2) % X == 0) {
-            B = (-A * Y - 2) / X;
-            break;
-        }
+    ll g = gcd(X, Y);
+    if (g >= 3) {
+        cout << -1 << endl;
+        return 0;
     }
-
-    if (X == 0) swap(A, B);
+    auto [A, B] = extgcd(Y, -X);
+    if (g == 1) {
+        A *= 2;
+        B *= 2;
+    }
+    assert(abs(A * Y - B * X) == 2);
     cout << A << " " << B << endl;
 }
