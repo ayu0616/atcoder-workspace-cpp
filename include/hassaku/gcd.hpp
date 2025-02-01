@@ -1,18 +1,17 @@
 #ifndef HASSAKU_GCD_HPP
 #define HASSAKU_GCD_HPP
 
+#include <bits/stdc++.h>
+
 namespace hassaku {
 
 template <typename T>
-T extgcd(T a, T b, T &x, T &y) {
-    if (b == 0) {
-        x = 1;
-        y = 0;
-        return a;
-    }
-    T d = extgcd(b, a % b, y, x);
+std::pair<T, T> extgcd(T a, T b) {
+    if (b == 0) return std::make_pair(1, 0);
+    long long x, y;
+    std::tie(y, x) = extgcd(b, a % b);
     y -= a / b * x;
-    return d;
+    return std::make_pair(x, y);
 }
 
 }  // namespace hassaku
