@@ -1,4 +1,15 @@
+#include <queue>
+#ifdef ONLINE_JUDGE
+#define NDEBUG
+#endif
+
 #include "../../lib.hpp"
+#include "hassaku/binary-search.hpp"
+#include "hassaku/cumulative-sum.hpp"
+#include "hassaku/doubly-linked-list.hpp"
+#include "hassaku/gcd.hpp"
+#include "hassaku/prime.hpp"
+#include "hassaku/union-find.hpp"
 
 // constexpr int MOD = 998244353;
 // constexpr int MOD = 1000000007;
@@ -6,61 +17,37 @@
 
 // using mint = static_modint<MOD>;
 
-// @brief トポロジカルソート
-// @return トポロジカルソートされた頂点のリスト
-vi topological_sort(vvi &g) {
-    int n = g.size();
-    vi res;
-    vb used(n, false);
-    function<void(int)> dfs = [&](int v) {
-        used[v] = true;
-        for (auto u : g[v]) {
-            if (!used[u]) dfs(u);
-        }
-        res.push_back(v);
-    };
-    rep(i, n) {
-        if (!used[i]) dfs(i);
-    }
-    reverse(all(res));
-    return res;
-}
-
 int main() {
-    int N, M;
+    cout << fixed << setprecision(18);
+    ll N, M;
     cin >> N >> M;
-    vi A(N, 0);
-    rep(i, N) cin >> A[i];
-    vvi g(N);
-    UnionFind merged(N);
+    vl A(N);
+    cin >> A;
+    vvi G(N);
     rep(i, M) {
-        int u, v;
-        cin >> u >> v;
-        u--;
-        v--;
-        u = merged.root(u);
-        v = merged.root(v);
-        if (A[u] < A[v]) g[u].push_back(v);
-        if (A[u] > A[v]) g[v].push_back(u);
-        if (A[u] == A[v]) {
-            merged.unite(u, v);
-            int mv = merged.root(v);
-            if (u == mv) u = v;
-            copy(all(g[u]), back_inserter(g[mv]));
+        ll a, b;
+        cin >> a >> b;
+        a--;
+        b--;
+        G[a].push_back(b);
+        G[b].push_back(a);
+    }
+    vi score(N);
+    score[0] = 1;
+    priority_queue<pii, vpii, greater<pii>> q;
+    q.push({A[0], 0});
+    while (!q.empty()) {
+        auto [a, v] = q.top();
+        q.pop();
+        for (auto u : G[v]) {
+            if (A[u] < a) continue;
+            int new_score = score[v];
+            if (A[u] > a) new_score++;
+            if (new_score > score[u]) {
+                score[u] = new_score;
+                q.push({A[u], u});
+            }
         }
     }
-
-    auto sorted = topological_sort(g);
-
-    vi ans(N, 0);
-    int cur = merged.root(0);
-    ans[cur] = 1;
-    auto cur_it = find(all(sorted), cur);
-    sorted = vi(cur_it, sorted.end());
-    for (auto v : sorted) {
-        for (auto u : g[v]) chmax(ans[u], ans[v] + 1);
-    }
-    int goal = N - 1;
-    goal = merged.root(goal);
-    cout << ans[goal] << endl;
+    cout << score[N - 1] << endl;
 }
