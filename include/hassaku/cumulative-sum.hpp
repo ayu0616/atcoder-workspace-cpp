@@ -1,9 +1,9 @@
 // 累積和のライブラリ
 
-#include <vector>
-
 #ifndef HASSAKU_CUMULATIVE_SUM
 #define HASSAKU_CUMULATIVE_SUM
+
+#include <vector>
 
 namespace hassaku {
 

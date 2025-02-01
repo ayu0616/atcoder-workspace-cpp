@@ -1,7 +1,7 @@
 #ifndef HASSAKU_GCD_HPP
 #define HASSAKU_GCD_HPP
 
-#include <bits/stdc++.h>
+#include <tuple>
 
 namespace hassaku {
 

@@ -130,56 +130,6 @@ constexpr auto max(set<T> a) {
     return *max_element(a.begin(), a.end());
 }
 
-template <class T = int>
-class UnionFind {
-    vector<T> par, rank, siz;
-
-   public:
-    // @param n 要素数
-    inline UnionFind(T n) {
-        par = vector<T>(n, -1);
-        rank = vector<T>(n, 0);
-        siz = vector<T>(n, 1);
-    }
-
-    // xの根を求める
-    inline T root(T x) {
-        if (par[x] == -1)
-            return x;
-        else
-            return par[x] = root(par[x]);
-    }
-
-    // xとyが同じグループに属するかどうか（根が一致するかどうか）
-    inline bool same(T x, T y) { return root(x) == root(y); }
-
-    // xを含むグループとyを含むグループとを併合する
-    inline void unite(T x, T y) {
-        x = root(x);
-        y = root(y);
-        if (x == y) return;
-
-        if (rank[x] < rank[y]) swap(x, y);
-        par[y] = x;
-        if (rank[x] == rank[y]) rank[x]++;
-        siz[x] += siz[y];
-    }
-
-    // xを含むグループのサイズ
-    inline T size(T x) { return siz[root(x)]; }
-
-    // グループ数
-    inline T groups() {
-        T res = 0;
-        for (T i = 0; i < par.size(); i++) {
-            if (par[i] == -1) res++;
-        }
-        return res;
-    }
-
-    // 頂点xが根かどうか
-    inline T is_root(T x) { return par[x] == -1; }
-};
 
 struct Edge;
 
@@ -327,42 +277,43 @@ class Graph : vector<Vertex> {
         return res;
     }
 
+    // TODO: UnionFindを使えるようにする
     // @brief 強連結成分分解
     // @param rev このグラフと逆向きの辺を持つグラフ
-    UnionFind<int> scc(Graph rev) const {
-        vi num;
-        vb visited(n, false);
+    // UnionFind<int> scc(Graph rev) const {
+    //     vi num;
+    //     vb visited(n, false);
 
-        function<void(int)> dfs;
-        dfs = [&](int v) {
-            visited[v] = true;
-            for (auto u : this->at(v).edges) {
-                if (visited[u]) continue;
-                dfs(u);
-            }
-            num.push_back(v);
-        };
-        rep(i, n) {
-            if (!visited[i]) dfs(i);
-        }
-        reverse(all(num));
+    //     function<void(int)> dfs;
+    //     dfs = [&](int v) {
+    //         visited[v] = true;
+    //         for (auto u : this->at(v).edges) {
+    //             if (visited[u]) continue;
+    //             dfs(u);
+    //         }
+    //         num.push_back(v);
+    //     };
+    //     rep(i, n) {
+    //         if (!visited[i]) dfs(i);
+    //     }
+    //     reverse(all(num));
 
-        rep(i, n) visited[i] = false;
-        UnionFind uf(n);
-        function<void(int)> dfs2;
-        dfs2 = [&](int v) {
-            visited[v] = true;
-            for (auto u : rev[v]) {
-                if (visited[u]) continue;
-                uf.unite(v, u);
-                dfs2(u);
-            }
-        };
-        for (auto v : num) {
-            if (!visited[v]) dfs2(v);
-        }
-        return uf;
-    }
+    //     rep(i, n) visited[i] = false;
+    //     UnionFind uf(n);
+    //     function<void(int)> dfs2;
+    //     dfs2 = [&](int v) {
+    //         visited[v] = true;
+    //         for (auto u : rev[v]) {
+    //             if (visited[u]) continue;
+    //             uf.unite(v, u);
+    //             dfs2(u);
+    //         }
+    //     };
+    //     for (auto v : num) {
+    //         if (!visited[v]) dfs2(v);
+    //     }
+    //     return uf;
+    // }
 
     vector<Edge> operator[](int id) const { return this->at(id).edges; }
 };
@@ -418,56 +369,6 @@ struct SegTree {
 
     ll operator[](int a) { return query(a, a + 1); }
 };
-
-/* 素数判定 */
-constexpr bool is_prime(const ll n) {
-    if (n <= 1) return false;
-    if (n == 2) return true;
-    if (n % 2 == 0) return false;
-    for (ll i = 3; i * i <= n; i += 2) {
-        if (n % i == 0) return false;
-    }
-    return true;
-}
-
-/*
-@brief 素数を列挙する関数
-@param upper 素数の上限
- */
-inline vector<ll> create_primes(const ll upper) {
-    vector<ll> primes;
-    vector<bool> is_p(upper + 1, true);
-
-    for (ll i = 2; i <= upper; i++) {
-        if (is_p[i]) {
-            primes.push_back(i);
-            for (ll j = i * 2; j <= upper; j += i) {
-                is_p[j] = false;
-            }
-        }
-    }
-    return primes;
-}
-
-/* @brief 素因数分解 */
-template <class T>
-constexpr vl prime_factorize(const T n) {
-    vl res;
-    while (n % 2 == 0) {
-        res.emplace_back(2);
-        n /= 2;
-    }
-    for (T i = 3; i * i <= n; i += 2) {
-        while (n % i == 0) {
-            res.emplace_back(i);
-            n /= i;
-        }
-    }
-    if (n != 1) {
-        res.emplace_back(n);
-    }
-    return res;
-}
 
 /*
 自動的にmodを取ってくれる型

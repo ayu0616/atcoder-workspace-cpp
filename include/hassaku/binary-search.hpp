@@ -4,10 +4,9 @@
 #define HASSAKU_BINARY_SEARCH
 
 #include <functional>
+using namespace std;
 
 namespace hassaku {
-
-using namespace std;
 
 template <typename T>
 T binary_search(T ok, T ng, function<bool(T)> is_ok, T eps = 1) {
