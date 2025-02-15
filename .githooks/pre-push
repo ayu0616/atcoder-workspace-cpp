@@ -1,4 +1,12 @@
 #! /bin/zsh
+date_limit=$(date -j -f "%Y-%m-%d %H:%M:%S" "2025-02-24 19:00:00" +%s)
+current_date=$(date +%s)
+
+if [ "$current_date" -lt "$date_limit" ]; then
+    echo "2024年7月24日19時まではpushできません。"
+    exit 1
+fi
+
 git diff --stat origin/main
 echo "コミットするコードに公開してはいけないコード（開催中のコンテスト）は含まれていません(y/N): "
 if read -q; then
