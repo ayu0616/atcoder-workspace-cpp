@@ -3,10 +3,10 @@
 
 #include <vector>
 
+namespace hassaku {
+
 using ll = long long;
 using vl = std::vector<ll>;
-
-namespace hassaku {
 
 /* 素数判定 */
 constexpr bool is_prime(const ll n) {
