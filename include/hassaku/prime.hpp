@@ -40,8 +40,8 @@ inline std::vector<ll> create_primes(const ll upper) {
 
 /* @brief 素因数分解 */
 template <class T>
-constexpr vl prime_factorize(const T n) {
-    vl res;
+constexpr std::vector<T> prime_factorize(T n) {
+    std::vector<T> res;
     while (n % 2 == 0) {
         res.emplace_back(2);
         n /= 2;
