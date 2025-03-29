@@ -80,6 +80,17 @@ def gen():
         f"create_test_input {contest}", shell=True
     )  # デバッグ用の入力ファイルを作成
 
+# atcoder-toolsのログインに成功しないため暫定的な処置
+# def gen():
+#     problems: list[str] = ["A", "B", "C", "D", "E", "F", "G"]
+#     for problem in problems:
+#         subprocess.run(
+#             f"mkdir -p {contest}/{problem}", shell=True
+#         )
+#         subprocess.run(
+#             f"cp template.cpp {contest}/{problem}/main.cpp", shell=True
+#         )
+        
 
 def wait():
     """コンテスト開始まで待機する"""

@@ -126,6 +126,14 @@
         },
         "terminal.integrated.env.osx": {
             "PATH": "${env:PATH}:${workspaceFolder}/scripts"
-        }
+        },
+        "python.defaultInterpreterPath": ".venv/bin/python"
+    },
+    "extensions": {
+        "recommendations": [
+            "llvm-vs-code-extensions.vscode-clangd",
+            "ms-vscode.cpptools",
+            "vadimcn.vscode-lldb"
+        ]
     }
 }
