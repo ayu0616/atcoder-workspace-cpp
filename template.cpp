@@ -3,12 +3,7 @@
 #endif
 
 #include "../../lib.hpp"
-#include "hassaku/binary-search.hpp"
-#include "hassaku/cumulative-sum.hpp"
-#include "hassaku/doubly-linked-list.hpp"
-#include "hassaku/gcd.hpp"
-#include "hassaku/prime.hpp"
-#include "hassaku/union-find.hpp"
+#include "hassaku/all.hpp"
 
 // constexpr int MOD = 998244353;
 // constexpr int MOD = 1000000007;
