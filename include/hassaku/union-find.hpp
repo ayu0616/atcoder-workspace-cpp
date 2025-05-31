@@ -12,9 +12,9 @@ class UnionFind {
    public:
     // @param n 要素数
     inline UnionFind(T n) {
-        par = vector<T>(n, -1);
-        rank = vector<T>(n, 0);
-        siz = vector<T>(n, 1);
+        par = std::vector<T>(n, -1);
+        rank = std::vector<T>(n, 0);
+        siz = std::vector<T>(n, 1);
     }
 
     // xの根を求める
@@ -34,7 +34,7 @@ class UnionFind {
         y = root(y);
         if (x == y) return;
 
-        if (rank[x] < rank[y]) swap(x, y);
+        if (rank[x] < rank[y]) std::swap(x, y);
         par[y] = x;
         if (rank[x] == rank[y]) rank[x]++;
         siz[x] += siz[y];
