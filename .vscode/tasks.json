@@ -5,7 +5,6 @@
             "label": "C/C++: g++-12 アクティブなファイルのビルド",
             "command": "/opt/homebrew/bin/g++-12",
             "args": [
-                // "-fanalyzer",
                 "-fdiagnostics-color=always",
                 "-g",
                 "${file}",
@@ -17,7 +16,7 @@
                 "${fileDirname}/${fileBasenameNoExtension}",
                 "-DHASSAKU_DEBUG",
                 "-Wall",
-                "-Wextra",
+                "-Wextra"
             ],
             "options": {
                 "cwd": "${fileDirname}"
@@ -25,7 +24,10 @@
             "problemMatcher": [
                 "$gcc"
             ],
-            "group": "build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
             "detail": "デバッガーによって生成されたタスク。"
         }
     ],

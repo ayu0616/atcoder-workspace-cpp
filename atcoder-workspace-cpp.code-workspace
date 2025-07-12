@@ -125,7 +125,7 @@
             "filesystem": "cpp"
         },
         "terminal.integrated.env.osx": {
-            "PATH": "${env:PATH}:${workspaceFolder}/scripts"
+            "PATH": "${env:PATH}:${workspaceFolder}/scripts:${workspaceFolder}/.venv/bin"
         },
         "python.defaultInterpreterPath": ".venv/bin/python"
     },
